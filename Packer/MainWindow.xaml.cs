@@ -23,6 +23,7 @@ namespace Packer
         public MainWindow()
         {
             InitializeComponent();
+            Window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
     }
 }

@@ -5,8 +5,65 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Packer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        x:Name="Window">
+    <Window.Resources>
+        <Style TargetType="Label">
+            <Setter Property="FontSize" Value="50"/>
+        </Style>
+    </Window.Resources>
+    
     <Grid>
+        <!-- Grid Definition -->
+        <Grid.ColumnDefinitions>
+            <!-- Anzahl und Breite  der Spalten -->
+            <ColumnDefinition Width="1*"/>
+            <!-- Dient als Trennlinie zwischen Packen und Entpacken -->
+            <ColumnDefinition Width="0.25*"/>
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <!-- Anzahl und Hoehe der Zeilen -->
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+
+
+        <!-- Packen -->
+        <!-- ViewBox veraendert die Groese automatisch um den verfuegbaren Platz zu fuellen und die Font zu fitten -->
+        <Viewbox HorizontalAlignment="Center" Grid.Row="0" VerticalAlignment="Center" Grid.Column="0" Height="75">
+            <Label>Packen</Label>
+        </Viewbox>
+
+        <Viewbox HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Grid.Column="0" Height="75">
+            <Button x:Name="packen_Datei">Datei auswählen</Button>
+        </Viewbox>
+
+        <Viewbox HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center" Grid.Column="0" Height="75">
+            <Button x:Name="packen_Ziel">Ziel auswählen</Button>
+        </Viewbox>
+
+        <Viewbox HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" Grid.Column="0" Height="75">
+            <Button x:Name="packen_Abschicken">Datei packen</Button>
+        </Viewbox>
+
+        <!-- Entpacken -->
+        <Viewbox HorizontalAlignment="Center" Grid.Row="0" VerticalAlignment="Center" Grid.Column="2" Height="75">
+            <Label>Entpacken</Label>
+        </Viewbox>
         
+        <Viewbox HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Grid.Column="2" Height="75">
+            <Button x:Name="entpacken_Datei">Datei auswählen</Button>
+        </Viewbox>
+        
+        <Viewbox HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" Grid.Column="2" Height="75">
+            <Button x:Name="entpacken_Abschicken">Entpacken</Button>
+        </Viewbox>
+
+
+
     </Grid>
 </Window>
