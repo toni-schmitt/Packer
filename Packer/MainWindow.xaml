@@ -16,54 +16,45 @@
     <Grid>
         <!-- Grid Definition -->
         <Grid.ColumnDefinitions>
-            <!-- Anzahl und Breite  der Spalten -->
-            <ColumnDefinition Width="1*"/>
-            <!-- Dient als Trennlinie zwischen Packen und Entpacken -->
             <ColumnDefinition Width="0.25*"/>
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="0.25*"/>
+            <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <!-- Anzahl und Hoehe der Zeilen -->
+            <RowDefinition Height="0.25*"/>
             <RowDefinition Height="1*"/>
+            <RowDefinition Height="0.25*"/>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="0.25*"/>
             <RowDefinition Height="1*"/>
+            <RowDefinition Height="0.25*"/>
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="0.25*"/>
+            
         </Grid.RowDefinitions>
 
 
-
-        <!-- Packen -->
-        <!-- ViewBox veraendert die Groese automatisch um den verfuegbaren Platz zu fuellen und die Font zu fitten -->
-        <Viewbox HorizontalAlignment="Center" Grid.Row="0" VerticalAlignment="Center" Grid.Column="0" Height="75">
-            <Label>Packen</Label>
+        <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1">
+            <Button x:Name="chooseFile" Content="Choose file" MinWidth="100" Click="chooseFile_Click" />
         </Viewbox>
 
-        <Viewbox HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Grid.Column="0" Height="75">
-            <Button x:Name="packen_Datei">Datei auswählen</Button>
+        <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="3">
+            <Image x:Name="previewImg"></Image>
         </Viewbox>
 
-        <Viewbox HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center" Grid.Column="0" Height="75">
-            <Button x:Name="packen_Ziel">Ziel auswählen</Button>
-        </Viewbox>
-
-        <Viewbox HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" Grid.Column="0" Height="75">
-            <Button x:Name="packen_Abschicken">Datei packen</Button>
-        </Viewbox>
-
-        <!-- Entpacken -->
-        <Viewbox HorizontalAlignment="Center" Grid.Row="0" VerticalAlignment="Center" Grid.Column="2" Height="75">
-            <Label>Entpacken</Label>
-        </Viewbox>
-        
-        <Viewbox HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Grid.Column="2" Height="75">
-            <Button x:Name="entpacken_Datei">Datei auswählen</Button>
-        </Viewbox>
-        
-        <Viewbox HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" Grid.Column="2" Height="75">
-            <Button x:Name="entpacken_Abschicken">Entpacken</Button>
+        <Viewbox x:Name="dest" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="5" Visibility="Hidden">
+            <TextBox x:Name="chooseDestination" MinWidth="200" Text="Destination File" ToolTip="Destination File Path" PreviewMouseDown="destFile_MouseDown"/>
         </Viewbox>
 
 
+        <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="7">
+            <Button x:Name="encode" Content="Encode" MinWidth="100" />
+        </Viewbox>
+
+        <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="3" Grid.Row="7">
+            <Button x:Name="decode" Content="Decode" MinWidth="100" />
+        </Viewbox>
 
     </Grid>
 </Window>

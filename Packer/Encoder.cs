@@ -9,12 +9,21 @@ namespace Packer
 {
     static class Encoder
     {
-        private static char _cMarker;
+        private static char _cMarker = '{';
         private static string _sFile;
+        public static string GetFile
+        {
+            get { return _sFile; }
+            set { _sFile = value; }
+        }
+        private static string _sNewFile = _sFile + ".ttpack";
         private static char _cMagicNbr;
 
 
-
+        /// <summary>
+        /// Decreases size of a file throug encoding
+        /// </summary>
+        /// <param name="filename">name of file to encode</param>
         public static void Encode(string filename)
         {
             _sFile = filename;
@@ -23,7 +32,7 @@ namespace Packer
             BinaryReader br = new BinaryReader(fsRead);
 
             // Stream for writing Encoded File
-            FileStream fsWrite = new FileStream(_sFile + ".ttpack", FileMode.Create, FileAccess.Write);
+            FileStream fsWrite = new FileStream(_sNewFile, FileMode.Create, FileAccess.Write);
             BinaryWriter bw = new BinaryWriter(fsWrite);
 
             
@@ -59,7 +68,7 @@ namespace Packer
                     bw.Write(sameBytes.Count);
                     bw.Write(sameBytes[0]);
                 } else
-                    // Writes just normal
+                    // Writes normal
                     for(int count = 0; count < sameBytes.Count; count++)
                         bw.Write(sameBytes[count]);
             }
