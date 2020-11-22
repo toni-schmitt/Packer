@@ -20,10 +20,12 @@ namespace Packer
     /// </summary>
     public partial class MainWindow : Window
     {
+        
         public MainWindow()
         {
             InitializeComponent();
             Window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
         }
 
         /// <summary>
@@ -33,39 +35,72 @@ namespace Packer
         /// <param name="e"></param>
         private void chooseFile_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
-            // Only shows bmp images
-            openFileDialog.Filter = "Bitmap Images (*.bmp)|*.bmp";
-            // Opens folder MyPictures
-            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-            string imgSrc = "";
-            if (openFileDialog.ShowDialog() == true)
-            {
-                // Sets chosen file name to encoder filename
-                imgSrc = openFileDialog.FileName;
-                // Sets chosen file name to filename for encoder
-                Encoder.GetFile = imgSrc;
-                // Make a Uniform Resource Identifier from the imgSrc-string
-                Uri uri = new Uri(imgSrc, UriKind.Absolute);
-                // Makes a BitmapImage (ImageSource) of the URI
-                previewImg.Source = new BitmapImage(uri);
-                if (imgSrc != "")
-                    dest.Visibility = Visibility.Visible;
+            Microsoft.Win32.OpenFileDialog fileDialog = new Microsoft.Win32.OpenFileDialog();
 
-                // TO DO: AUTOMATICALLY CHECK IF SELECTED FILE HAS HEADER OR NOT!!!!!
-                // IF FILE HAS HEADER ONLY SHOW DECODE OPTION!!!!!!
-                // IF FILE HAS NO HEADER ONLY SHOW ENCODE OPTION!!!!!!
+            //fileDialog.Filter = "Bitmap Images (*.bmp)|*.bmp";
+            fileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+            if(fileDialog.ShowDialog() == true)
+            {
+                Values.sourceFileName = fileDialog.SafeFileName;
+                Values.sourceFilePath = fileDialog.FileName;
+                Values.sourceFileDirectory = System.IO.Path.GetDirectoryName(Values.sourceFilePath);
+
+                Values.destFileName = Values.sourceFileName + ".ttpack";
+                Values.destFileDirectory = Values.sourceFileDirectory;
+                Values.destFilePath = Values.destFileDirectory + "\\" + Values.destFileName;
+
+                //Values.header = "ttpack" + Values.marker + Values.sourceFileName;
+
+                // A new Bitmap Image with a new Uniform Resource Identifier is requiered for Image.Source
+                //previewImg.Source = new BitmapImage(new Uri(Values.sourceFilePath, UriKind.Absolute));
+
+                // Destination Directory is Source Directory by default
+                chooseDestination.Text = Values.destFileDirectory;
+                dest.Visibility = Visibility.Visible;
+            }
+
+            if (Encoder.HasHeader())
+            {
+                decode.Visibility = Visibility.Visible;
+                encode.Visibility = Visibility.Hidden;
+                previewImg.Source = null;
+            }
+            else
+            {
+                decode.Visibility = Visibility.Hidden;
+                encode.Visibility = Visibility.Visible;
+                previewImg.Source = new BitmapImage(new Uri(Values.sourceFilePath, UriKind.Absolute));
             }
         }
 
+        /// <summary>
+        /// Opens a dialog to choose a destination folder
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void destFile_MouseDown(object sender, MouseButtonEventArgs e)
+        { 
+            System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
+            System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+            Values.destFileDirectory = dialog.SelectedPath;
+            chooseDestination.Text = Values.destFileDirectory;
+        }
+
+        /// <summary>
+        /// Runs on Encode Button Click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void encode_Click(object sender, RoutedEventArgs e)
         {
-            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
-            {
-                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-                chooseDestination.Text = dialog.SelectedPath;
-                
-            }
+            // Sets Cursor to Wait to indicate for User that something is happening
+            Window.Cursor = Cursors.Wait;
+
+            Encoder.Encode();
+
+            Window.Cursor = Cursors.Arrow;
+            MessageBox.Show("Done");
         }
     }
 }
