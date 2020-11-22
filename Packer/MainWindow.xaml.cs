@@ -90,6 +90,7 @@ namespace Packer
         /// <param name="e"></param>
         private void destFile_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            // Opens Dialog to choose a Folder
             System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
             System.Windows.Forms.DialogResult result = dialog.ShowDialog();
             Values.destFileDirectory = dialog.SelectedPath;
@@ -97,43 +98,53 @@ namespace Packer
         }
 
         /// <summary>
-        /// Runs on Encode Button Click
+        /// Indicates for the User that something is happending by starting/stopping a animation and disabeling/enableing the button
+        /// Encodes or Decodes depending on which button is clicked
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void encode_Click(object sender, RoutedEventArgs e)
+        private async void DeEnCode_Click(object sender, RoutedEventArgs e)
         {
             // Sets Cursor to Wait to indicate that something is happening for User
             Window.Cursor = Cursors.Wait;
 
+            // Starts progress Animation of Button and Circle
             MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndeterminate(encode, true);
             MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndicatorVisible(encode, true);
             progressBar.Visibility = Visibility.Visible;
+            // Disables all elements so that no new operation can be done
+            chooseFile.IsEnabled = false;
+            chooseDestination.IsEnabled = false;
+            encode.IsEnabled = false;
+            decode.IsEnabled = false;
+            previewImg.Opacity = .2;
 
-            await Task.Run(() => Encoder.Encode());
+            // Sets the sender object to a Button object so that the Name of the Button is readable
+            var btn = sender as Button;
+            // En- or Decodes depeding on the Button Name
+            switch (btn.Name)
+            {
+                // Awaits Method asynchronously so that the window does not freeze
+                case "encode":
+                    await Task.Run(() => Encoder.Encode());
+                    break;
+                case "decode":
+                    await Task.Run(() => Decoder.Decode());
+                    break;
+            }
 
+            // Stops progress Animation of Button and Cricle
             progressBar.Visibility = Visibility.Hidden;
             MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndeterminate(encode, false);
             MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndicatorVisible(encode, false);
+            // Enables all elements again
+            chooseFile.IsEnabled = true;
+            chooseDestination.IsEnabled = true;
+            encode.IsEnabled = true;
+            decode.IsEnabled = true;
+            previewImg.Opacity = 1;
 
-            Window.Cursor = Cursors.Arrow;
-        }
-
-        private async void decode_Click(object sender, RoutedEventArgs e)
-        {
-            // Sets Cursor to Wait to indicate that something is happening for User
-            Window.Cursor = Cursors.Wait;
-
-            MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndeterminate(decode, true);
-            MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndicatorVisible(decode, true);
-            progressBar.Visibility = Visibility.Visible;
-
-            await Task.Run(() => Decoder.Decode());
-
-            progressBar.Visibility = Visibility.Hidden;
-            MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndeterminate(decode, false);
-            MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndicatorVisible(decode, false);
-
+            // Sets Cursor back to default
             Window.Cursor = Cursors.Arrow;
         }
     }

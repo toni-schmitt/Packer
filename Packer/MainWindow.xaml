@@ -13,8 +13,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Packer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
-        x:Name="Window">
+        Title="Packer" Height="450" Width="800"
+        x:Name="Window" Icon="minimieren.png">
     <Window.Resources>
         <Style TargetType="Label">
             <Setter Property="FontSize" Value="50"/>
@@ -46,15 +46,21 @@
             <Button x:Name="chooseFile" 
                     Content="Choose file" 
                     MinWidth="100" 
-                    Click="chooseFile_Click" />
+                    Click="chooseFile_Click" IsEnabled="True" />
         </Viewbox>
 
         <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="3">
-            <Image x:Name="previewImg"></Image>
+            <Image x:Name="previewImg"
+                   IsEnabled="True"  />
         </Viewbox>
 
         <Viewbox x:Name="dest" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="5" Visibility="Hidden">
-            <TextBox x:Name="chooseDestination" MinWidth="200" Text="Destination File" ToolTip="Destination File Path" PreviewMouseDown="destFile_MouseDown"/>
+            <TextBox x:Name="chooseDestination" 
+                     MinWidth="200" 
+                     Text="Destination File" 
+                     ToolTip="Destination File Path" 
+                     PreviewMouseDown="destFile_MouseDown"
+                     IsEnabled="True"/>
         </Viewbox>
 
 
@@ -62,26 +68,29 @@
             <Button x:Name="encode" 
                     Content="Encode" 
                     MinWidth="100" 
-                    Click="encode_Click" 
+                    Click="DeEnCode_Click"
                     Visibility="Hidden" 
                     Style="{StaticResource MaterialDesignRaisedButton}"
                     materialDesign:ButtonProgressAssist.Value="-1"
                     materialDesign:ButtonProgressAssist.IsIndicatorVisible="False"
-                    materialDesign:ButtonProgressAssist.IsIndeterminate="False"/>
+                    materialDesign:ButtonProgressAssist.IsIndeterminate="False"
+                    IsEnabled="True"/>
         </Viewbox>
 
         <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="7">
             <Button x:Name="decode" 
                     Content="Decode" 
                     MinWidth="100" 
+                    Click="DeEnCode_Click"
                     Visibility="Hidden" 
                     Style="{StaticResource MaterialDesignRaisedButton}"
                     materialDesign:ButtonProgressAssist.Value="-1"
                     materialDesign:ButtonProgressAssist.IsIndicatorVisible="False"
-                    materialDesign:ButtonProgressAssist.IsIndeterminate="False" Click="decode_Click"/>
+                    materialDesign:ButtonProgressAssist.IsIndeterminate="False" 
+                    IsEnabled="True"/>
         </Viewbox>
 
-        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="7">
+        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="3">
             <ProgressBar x:Name="progressBar"
                     Style="{StaticResource MaterialDesignCircularProgressBar}"
                     Value="0"
