@@ -1,4 +1,12 @@
 ﻿<Window x:Class="Packer.MainWindow"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -12,7 +20,7 @@
             <Setter Property="FontSize" Value="50"/>
         </Style>
     </Window.Resources>
-    
+
     <Grid>
         <!-- Grid Definition -->
         <Grid.ColumnDefinitions>
@@ -30,12 +38,15 @@
             <RowDefinition Height="0.25*"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="0.25*"/>
-            
+
         </Grid.RowDefinitions>
 
 
         <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1">
-            <Button x:Name="chooseFile" Content="Choose file" MinWidth="100" Click="chooseFile_Click" />
+            <Button x:Name="chooseFile" 
+                    Content="Choose file" 
+                    MinWidth="100" 
+                    Click="chooseFile_Click" />
         </Viewbox>
 
         <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="3">
@@ -48,11 +59,34 @@
 
 
         <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="7">
-            <Button x:Name="encode" Content="Encode" MinWidth="100" Click="encode_Click" Visibility="Hidden" />
+            <Button x:Name="encode" 
+                    Content="Encode" 
+                    MinWidth="100" 
+                    Click="encode_Click" 
+                    Visibility="Hidden" 
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    materialDesign:ButtonProgressAssist.Value="-1"
+                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="False"
+                    materialDesign:ButtonProgressAssist.IsIndeterminate="False"/>
         </Viewbox>
 
         <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="7">
-            <Button x:Name="decode" Content="Decode" MinWidth="100" Visibility="Hidden" />
+            <Button x:Name="decode" 
+                    Content="Decode" 
+                    MinWidth="100" 
+                    Visibility="Hidden" 
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    materialDesign:ButtonProgressAssist.Value="-1"
+                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="False"
+                    materialDesign:ButtonProgressAssist.IsIndeterminate="False" Click="decode_Click"/>
+        </Viewbox>
+
+        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="7">
+            <ProgressBar x:Name="progressBar"
+                    Style="{StaticResource MaterialDesignCircularProgressBar}"
+                    Value="0"
+                    IsIndeterminate="True"
+                    Visibility="Hidden"/>
         </Viewbox>
 
     </Grid>

@@ -25,7 +25,7 @@ namespace Packer
     /// </summary>
     public partial class MainWindow : Window
     {
-        
+
         public MainWindow()
         {
             InitializeComponent();
@@ -42,10 +42,10 @@ namespace Packer
         {
             Microsoft.Win32.OpenFileDialog fileDialog = new Microsoft.Win32.OpenFileDialog();
 
-            //fileDialog.Filter = "Bitmap Images (*.bmp)|*.bmp";
+            fileDialog.Filter = "TTPACK Files (*.ttpack) | *.ttpack; | Bitmap Images (*.bmp) | *.bmp; | Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png) | *.jpg; *.jpeg; *.jpe; *.jfif; *.png";
             fileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
-            if(fileDialog.ShowDialog() == true)
+            if (fileDialog.ShowDialog() == true)
             {
                 Values.sourceFileName = fileDialog.SafeFileName;
                 Values.sourceFilePath = fileDialog.FileName;
@@ -89,7 +89,7 @@ namespace Packer
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void destFile_MouseDown(object sender, MouseButtonEventArgs e)
-        { 
+        {
             System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
             System.Windows.Forms.DialogResult result = dialog.ShowDialog();
             Values.destFileDirectory = dialog.SelectedPath;
@@ -101,15 +101,40 @@ namespace Packer
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void encode_Click(object sender, RoutedEventArgs e)
+        private async void encode_Click(object sender, RoutedEventArgs e)
         {
             // Sets Cursor to Wait to indicate that something is happening for User
             Window.Cursor = Cursors.Wait;
 
-            Encoder.Encode();
+            MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndeterminate(encode, true);
+            MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndicatorVisible(encode, true);
+            progressBar.Visibility = Visibility.Visible;
+
+            await Task.Run(() => Encoder.Encode());
+
+            progressBar.Visibility = Visibility.Hidden;
+            MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndeterminate(encode, false);
+            MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndicatorVisible(encode, false);
 
             Window.Cursor = Cursors.Arrow;
-            MessageBox.Show("Done");
+        }
+
+        private async void decode_Click(object sender, RoutedEventArgs e)
+        {
+            // Sets Cursor to Wait to indicate that something is happening for User
+            Window.Cursor = Cursors.Wait;
+
+            MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndeterminate(decode, true);
+            MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndicatorVisible(decode, true);
+            progressBar.Visibility = Visibility.Visible;
+
+            await Task.Run(() => Decoder.Decode());
+
+            progressBar.Visibility = Visibility.Hidden;
+            MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndeterminate(decode, false);
+            MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndicatorVisible(decode, false);
+
+            Window.Cursor = Cursors.Arrow;
         }
     }
 }

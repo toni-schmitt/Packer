@@ -31,8 +31,10 @@ namespace Packer
             //Values.marker = SearchForMarker();
 
             // Writes header and sourceFileName at first pos in file
-            bw.Write(Values.header);
-            bw.Write(Values.sourceFileName);
+            // Encoding.ASCII converts the string to byte-values
+            // If it would not be converted, there would be an not wanted symbol at the first Position
+            bw.Write(Encoding.ASCII.GetBytes(Values.header));
+            bw.Write(Encoding.ASCII.GetBytes(Values.sourceFileName));
 
             while (fsRead.Position < fsRead.Length)
             {
@@ -140,13 +142,13 @@ namespace Packer
             fsRead = new FileStream(Values.sourceFilePath, FileMode.Open, FileAccess.Read);
             br = new BinaryReader(fsRead);
             // Write to variable bc Streams need to be closed before returning value
-            string read = br.ReadString();
+            byte[] read = br.ReadBytes(Values.header.Length);
             // Closing Streams
             fsRead.Flush();
             fsRead.Close();
             br.Close();
-            // Check if variable matches Values.Header
-            if (read == Values.header)
+            // Check if read-Array has same values as (byte)Values.header
+            if (Enumerable.SequenceEqual(read, Encoding.ASCII.GetBytes(Values.header)))
                 return true;
             else
                 return false;
