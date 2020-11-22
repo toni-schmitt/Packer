@@ -10,7 +10,7 @@ namespace Packer
     {
         public static void Decode()
         {
-            System.Threading.Thread.Sleep(2500);
+            System.Threading.Thread.Sleep(8500);
         }
     }
 }
