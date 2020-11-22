@@ -13,6 +13,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+// Dont use these Using directives or elese some Options like Cursor are not going to work
+// Some Classes are in both directives
+// using System.Windows.Forms;
+// using Microsoft.Win32
+
 namespace Packer
 {
     /// <summary>
@@ -60,14 +65,18 @@ namespace Packer
                 dest.Visibility = Visibility.Visible;
             }
 
+            // Shows appropriate Options
+            // for example if File can be Encoded only show Encode Option
             if (Encoder.HasHeader())
             {
+                // Show Decode Button, Hide Encode Button, Hide Image Preview
                 decode.Visibility = Visibility.Visible;
                 encode.Visibility = Visibility.Hidden;
                 previewImg.Source = null;
             }
             else
             {
+                // Hide Decode Button, Show Encode Button, Show Image Preview
                 decode.Visibility = Visibility.Hidden;
                 encode.Visibility = Visibility.Visible;
                 previewImg.Source = new BitmapImage(new Uri(Values.sourceFilePath, UriKind.Absolute));
@@ -94,7 +103,7 @@ namespace Packer
         /// <param name="e"></param>
         private void encode_Click(object sender, RoutedEventArgs e)
         {
-            // Sets Cursor to Wait to indicate for User that something is happening
+            // Sets Cursor to Wait to indicate that something is happening for User
             Window.Cursor = Cursors.Wait;
 
             Encoder.Encode();
