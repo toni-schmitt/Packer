@@ -19,7 +19,6 @@
             <ColumnDefinition Width="0.25*"/>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="0.25*"/>
-            <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.25*"/>
@@ -49,11 +48,11 @@
 
 
         <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="7">
-            <Button x:Name="encode" Content="Encode" MinWidth="100" />
+            <Button x:Name="encode" Content="Encode" MinWidth="100" Click="encode_Click" Visibility="Hidden" />
         </Viewbox>
 
-        <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="3" Grid.Row="7">
-            <Button x:Name="decode" Content="Decode" MinWidth="100" />
+        <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="7">
+            <Button x:Name="decode" Content="Decode" MinWidth="100" Visibility="Hidden" />
         </Viewbox>
 
     </Grid>
