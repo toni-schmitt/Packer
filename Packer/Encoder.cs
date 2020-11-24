@@ -34,6 +34,7 @@ namespace Packer
             // Encoding.ASCII converts the string to byte-values
             // If it would not be converted, there would be an not wanted symbol at the first Position
             bw.Write(Encoding.ASCII.GetBytes(Values.header));
+            bw.Write((byte)Values.sourceFileName.Length);
             bw.Write(Encoding.ASCII.GetBytes(Values.sourceFileName));
 
             while (fsRead.Position < fsRead.Length)
@@ -67,11 +68,12 @@ namespace Packer
                     bw.Write((byte)Values.marker);
                     bw.Write(sameBytes.Count);
                     bw.Write(sameBytes[0]);
-                } else
+                }
+                else
                     // Writes normal
                     for(int count = 0; count < sameBytes.Count; count++)
                         bw.Write(sameBytes[count]);
-
+                
             }
 
             // Closes all Streams

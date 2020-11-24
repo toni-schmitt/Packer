@@ -18,6 +18,6 @@ namespace Packer
 
         public static char marker = '{';
 
-        public static string header = "ttpack{";
+        public static string header = "ttpack" + marker;
     }
 }
