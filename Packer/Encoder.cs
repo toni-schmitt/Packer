@@ -66,7 +66,7 @@ namespace Packer
                 {
                     // Writes in format
                     bw.Write((byte)Values.marker);
-                    bw.Write(sameBytes.Count);
+                    bw.Write((byte)sameBytes.Count);
                     bw.Write(sameBytes[0]);
                 }
                 else
