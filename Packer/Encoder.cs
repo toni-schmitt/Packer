@@ -9,11 +9,7 @@ namespace Packer
 {
     static class Encoder
     {
-        static FileStream fsRead;
-        static BinaryReader br;
 
-        static FileStream fsWrite;
-        static BinaryWriter bw;
         /// <summary>
         /// Decreases size of a file throug encoding
         /// </summary>
@@ -21,32 +17,30 @@ namespace Packer
         {
 
             // Stream for reading Original File
-            fsRead = new FileStream(Values.sourceFilePath, FileMode.Open, FileAccess.Read);
-            br = new BinaryReader(fsRead);
+            FileStream fsRead = new FileStream(Values.source.FullName, FileMode.Open, FileAccess.Read);
+            BinaryReader br = new BinaryReader(fsRead);
 
             // Stream for writing Encoded File
-            fsWrite = new FileStream(Values.destFilePath, FileMode.Create, FileAccess.Write);
-            bw = new BinaryWriter(fsWrite);
+            FileStream fsWrite = new FileStream(Values.destFilePath, FileMode.Create, FileAccess.Write);
+            BinaryWriter bw = new BinaryWriter(fsWrite);
 
-            //Values.marker = SearchForMarker();
+            // Searches least used value in File and sets it to Marker
+            Values.marker = (char)SearchForMarker(fsRead, br);
 
-            // Writes header and sourceFileName at first pos in file
-            // Encoding.ASCII converts the string to byte-values
-            // If it would not be converted, there would be an not wanted symbol at the first Position
-            bw.Write(Encoding.ASCII.GetBytes(Values.header));
-            bw.Write((byte)Values.sourceFileName.Length);
-            bw.Write(Encoding.ASCII.GetBytes(Values.sourceFileName));
+            // Writes Header to File
+            WriteHeader(bw);
 
             while (fsRead.Position < fsRead.Length)
             {
-                // List for easy saving of same values
-                List<byte> sameBytes = new List<byte>();
-
-                // First value readed
-                sameBytes.Add(br.ReadByte());
+                // Creating List for saving same values and adding Value of File at Position
+                List<byte> sameBytes = new List<byte>
+                {
+                    // First value readed
+                    br.ReadByte()
+                };
 
                 // While first readed value is same as next readed value
-                while(sameBytes[0] == br.ReadByte())
+                while (sameBytes[0] == br.ReadByte())
                 {
                     // Position must be decreased by 1 bc ReadByte() increases it automatically
                     fsRead.Position--;
@@ -56,17 +50,18 @@ namespace Packer
                     if (fsRead.Position == fsRead.Length)
                         break;
                 }
+
                 // Decreasing Position only if not at end
                 // Else main-while-loop would still be going
                 if (fsRead.Position != fsRead.Length)
                     fsRead.Position--;
 
 
-                if(sameBytes.Count > 3)
+                if(sameBytes.Count > 3 || sameBytes[0] == Values.marker)
                 {
                     // Writes in format
                     bw.Write((byte)Values.marker);
-                    bw.Write((byte)sameBytes.Count);
+                    bw.Write(sameBytes.Count);
                     bw.Write(sameBytes[0]);
                 }
                 else
@@ -86,74 +81,25 @@ namespace Packer
             bw.Close();
 
         }
-
-        private static char SearchForMarker()
+        private static void WriteHeader(BinaryWriter bw)
         {
-            byte[] allValues = br.ReadBytes((int)fsRead.Length);
-            Array.Sort(allValues);
-
-            Dictionary<byte, int> values = new Dictionary<byte, int>();
-
-            int count = 1;
-            byte[] specialChars =
-            {
-                33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,58,59,60,61,62,63,64,91,92,93,94,95,96,123,124,125,126
-            };
-
-            bool canBeAddedToList = false;
-
-            for (int index = 0; index < allValues.Length; index++)
-            {
-                if (!canBeAddedToList)
-                {
-                    for (int specialChar = 0; specialChar < specialChars.Length; specialChar++)
-                    {
-                        if (allValues[index] == specialChars[specialChar])
-                        {
-                            canBeAddedToList = true;
-                            break;
-                        }
-                    }
-                }
-                if (canBeAddedToList)
-                {
-                    if (allValues[index] == allValues[index + 1])
-                    {
-                        count++;
-                    }
-                    else
-                    {
-                        canBeAddedToList = false;
-                        values.Add(allValues[index], count);
-                        count = 1;
-                    }
-                }
-            }
-
-            byte mostUsedByte = values.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
-            return (char)mostUsedByte;
+            bw.Write(Encoding.ASCII.GetBytes(Values.header));
+            bw.Write((byte)Values.marker);
+            bw.Write(Values.source.Name.Length);
+            bw.Write(Encoding.ASCII.GetBytes(Values.source.Name));
         }
 
-        /// <summary>
-        /// Checks if File has header
-        /// </summary>
-        /// <returns>true if file has header, false if file has no header</returns>
-        public static bool HasHeader()
+
+
+        private static int SearchForMarker(FileStream fsRead, BinaryReader br)
         {
-            // Open Streams
-            fsRead = new FileStream(Values.sourceFilePath, FileMode.Open, FileAccess.Read);
-            br = new BinaryReader(fsRead);
-            // Write to variable bc Streams need to be closed before returning value
-            byte[] read = br.ReadBytes(Values.header.Length);
-            // Closing Streams
-            fsRead.Flush();
-            fsRead.Close();
-            br.Close();
-            // Check if read-Array has same values as (byte)Values.header
-            if (Enumerable.SequenceEqual(read, Encoding.ASCII.GetBytes(Values.header)))
-                return true;
-            else
-                return false;
+            int[] ascii = new int[256];
+            while (fsRead.Position < fsRead.Length)
+                ascii[br.ReadByte()]++;
+            fsRead.Position = 0;
+            return Array.IndexOf(ascii, ascii.Min());
         }
+
+        
     }
 }
