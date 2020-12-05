@@ -5,8 +5,9 @@
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
-        Background="{DynamicResource MaterialDesignPaper}"
+        Background="{DynamicResource MaterialDesignDarkBackground}"
         FontFamily="{DynamicResource MaterialDesignFont}"
+        Foreground="{DynamicResource MaterialDesignDarkForeground}"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -14,14 +15,15 @@
         xmlns:local="clr-namespace:Packer"
         mc:Ignorable="d"
         Title="Packer" Height="450" Width="800"
-        x:Name="Window" Icon="minimieren.png">
+        x:Name="Window" Icon="minimieren.png" ResizeMode="NoResize" WindowStyle="ThreeDBorderWindow">
     <Window.Resources>
         <Style TargetType="Label">
             <Setter Property="FontSize" Value="50"/>
         </Style>
     </Window.Resources>
 
-    <Grid>
+
+    <Grid x:Name="grid">
         <!-- Grid Definition -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.25*"/>
@@ -29,68 +31,100 @@
             <ColumnDefinition Width="0.25*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.25*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="0.25*"/>
-            <RowDefinition Height="4*"/>
-            <RowDefinition Height="0.25*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="0.25*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="0.25*"/>
-
+            <RowDefinition Height="0.25*"/>                 <!-- 0 -->
+            <RowDefinition Height="1*"/>                    <!-- 1 -->
+            <RowDefinition Height="0.25*"/>                 <!-- 2 -->
+            <RowDefinition Height="1*"/>                    <!-- 3 -->
+            <RowDefinition Height="0.25*"/>                 <!-- 4 -->
+            <RowDefinition Height="1*"/>                    <!-- 5 -->
+            <RowDefinition x:Name="midRow" Height="2*"/>    <!-- 6 -->
+            <RowDefinition Height="1*"/>                    <!-- 7 -->
+            <RowDefinition Height="0.25*"/>                 <!-- 8 -->
+            <RowDefinition Height="1*"/>                    <!-- 9 -->
+            <RowDefinition Height="0.25*"/>                 <!-- 10 -->
         </Grid.RowDefinitions>
 
-
-        <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1">
-            <Button x:Name="chooseFile" 
-                    Content="Choose file" 
+        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0">
+            <Button x:Name="startUnitTest"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    Content="" 
+                    MinWidth=".1" 
+                    MaxWidth=".2"
+                    Click="StartUnitTest_Click"/>
+        </Viewbox>
+        
+        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1">
+            <TextBlock 
+                Style="{StaticResource MaterialDesignHeadline1TextBlock}">
+                Packer - make your files smaller today
+            </TextBlock>
+        </Viewbox>
+        
+        <Viewbox x:Name="chooseFileVB" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="6">
+            <Button x:Name="chooseFile"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    Content="Choose file " 
+                    ToolTip="Choose files you want to decode or encode"
                     MinWidth="100" 
-                    Click="chooseFile_Click" IsEnabled="True" />
+                    Click="ChooseFile_Click" IsEnabled="True" />
         </Viewbox>
+        
 
-        <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="3">
-            <Image x:Name="previewImg"
-                   IsEnabled="True"  />
-        </Viewbox>
-
-        <Viewbox x:Name="dest" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="5" Visibility="Hidden">
-            <TextBox x:Name="chooseDestination" 
+        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="5">
+            <TextBox x:Name="destinationDirectory" 
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                      MinWidth="200" 
-                     Text="Destination File" 
-                     ToolTip="Destination File Path" 
-                     PreviewMouseDown="destFile_MouseDown"
-                     IsEnabled="True"/>
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     materialDesign:HintAssist.Hint="Destination Directory" 
+                     ToolTip="Optional: Click to change the output directory." 
+                     PreviewMouseDown="DestFolder_MouseDown"
+                     IsEnabled="True"
+                     Visibility="Hidden"/>
         </Viewbox>
 
 
-        <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="7">
+        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="7">
+            <TextBox x:Name="destinationName" 
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     x:FieldModifier="public"
+                     MinWidth="200" 
+                     ToolTip="Optional: Type in a desired name for your output file." 
+                     IsEnabled="True"
+                     materialDesign:HintAssist.Hint="Name of File to Encode / Decode"
+                     Visibility="Hidden"/>
+        </Viewbox>
+        
+
+        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="9">
             <Button x:Name="encode" 
                     Content="Encode" 
                     MinWidth="100" 
                     Click="DeEnCode_Click"
                     Visibility="Hidden" 
-                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Style="{StaticResource MaterialDesignOutlinedButton}"
                     materialDesign:ButtonProgressAssist.Value="-1"
                     materialDesign:ButtonProgressAssist.IsIndicatorVisible="False"
                     materialDesign:ButtonProgressAssist.IsIndeterminate="False"
                     IsEnabled="True"/>
         </Viewbox>
 
-        <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="7">
+        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="9">
             <Button x:Name="decode" 
                     Content="Decode" 
                     MinWidth="100" 
                     Click="DeEnCode_Click"
                     Visibility="Hidden" 
-                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Style="{StaticResource MaterialDesignOutlinedButton}"
                     materialDesign:ButtonProgressAssist.Value="-1"
                     materialDesign:ButtonProgressAssist.IsIndicatorVisible="False"
                     materialDesign:ButtonProgressAssist.IsIndeterminate="False" 
                     IsEnabled="True"/>
         </Viewbox>
 
-        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="3">
+        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="5">
             <ProgressBar x:Name="progressBar"
                     Style="{StaticResource MaterialDesignCircularProgressBar}"
                     Value="0"
