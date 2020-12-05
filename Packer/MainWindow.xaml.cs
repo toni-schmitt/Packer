@@ -33,53 +33,58 @@ namespace Packer
 
         }
 
+
         /// <summary>
         /// Opens a file Dialog to choose a bmp-image to encode
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void chooseFile_Click(object sender, RoutedEventArgs e)
+        private void ChooseFile_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog fileDialog = new Microsoft.Win32.OpenFileDialog();
+            // Createa a FileDialog 
+            Microsoft.Win32.OpenFileDialog fileDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                // Set the Filter of the FileDialog
+                Filter = "All Files (*.*) | *.*; | TTPACK Files (*.ttpack) | *.ttpack; | Bitmap Images (*.bmp) | *.bmp; | Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png) | *.jpg; *.jpeg; *.jpe; *.jfif; *.png",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+            };
 
-            fileDialog.Filter = "TTPACK Files (*.ttpack) | *.ttpack; | Bitmap Images (*.bmp) | *.bmp; | Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png) | *.jpg; *.jpeg; *.jpe; *.jfif; *.png";
-            fileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-
+            // Show FileDialog
             if (fileDialog.ShowDialog() == true)
             {
-                Values.sourceFileName = fileDialog.SafeFileName;
-                Values.sourceFilePath = fileDialog.FileName;
-                Values.sourceFileDirectory = System.IO.Path.GetDirectoryName(Values.sourceFilePath);
 
-                Values.destFileName = Values.sourceFileName + ".ttpack";
-                Values.destFileDirectory = Values.sourceFileDirectory;
-                Values.destFilePath = Values.destFileDirectory + "\\" + Values.destFileName;
+                Values.source = new System.IO.FileInfo(fileDialog.FileName);
 
-                //Values.header = "ttpack" + Values.marker + Values.sourceFileName;
+                Values.destFileDirectory = Values.source.DirectoryName;
 
-                // A new Bitmap Image with a new Uniform Resource Identifier is requiered for Image.Source
-                //previewImg.Source = new BitmapImage(new Uri(Values.sourceFilePath, UriKind.Absolute));
 
                 // Destination Directory is Source Directory by default
-                chooseDestination.Text = Values.destFileDirectory;
-                dest.Visibility = Visibility.Visible;
-            }
+                destinationName.Text = Values.source.Name;
+                destinationDirectory.Text = Values.destFileDirectory;
 
-            // Shows appropriate Options
-            // for example if File can be Encoded only show Encode Option
-            if (Encoder.HasHeader())
-            {
-                // Show Decode Button, Hide Encode Button, Hide Image Preview
-                decode.Visibility = Visibility.Visible;
-                encode.Visibility = Visibility.Hidden;
-                previewImg.Source = null;
-            }
-            else
-            {
-                // Hide Decode Button, Show Encode Button, Show Image Preview
-                decode.Visibility = Visibility.Hidden;
-                encode.Visibility = Visibility.Visible;
-                previewImg.Source = new BitmapImage(new Uri(Values.sourceFilePath, UriKind.Absolute));
+                // Puts the Button to top position
+                midRow.Height = new GridLength(0.25, GridUnitType.Star);
+                chooseFileVB.SetValue(Grid.RowProperty, 3);
+                chooseFile.Content = "Choose new file";
+
+                // Enables elements 
+                destinationDirectory.Visibility = Visibility.Visible;
+                destinationName.Visibility = Visibility.Visible;
+                
+                // Shows appropriate Options
+                // for example if File can be Encoded only show Encode Option
+                if (General.HasHeader())
+                {
+                    // Show Decode Button, Hide Encode Button, Hide Image Preview
+                    decode.Visibility = Visibility.Visible;
+                    encode.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    // Hide Decode Button, Show Encode Button, Show Image Preview
+                    decode.Visibility = Visibility.Hidden;
+                    encode.Visibility = Visibility.Visible;
+                }
             }
         }
 
@@ -88,13 +93,17 @@ namespace Packer
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void destFile_MouseDown(object sender, MouseButtonEventArgs e)
+        private void DestFolder_MouseDown(object sender, MouseButtonEventArgs e)
         {
             // Opens Dialog to choose a Folder
             System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
-            System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-            Values.destFileDirectory = dialog.SelectedPath;
-            chooseDestination.Text = Values.destFileDirectory;
+            
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {// If File is selected (User clicked on OK)
+                // Updates destination Values
+                Values.destFileDirectory = dialog.SelectedPath;
+                destinationDirectory.Text = Values.destFileDirectory;
+            }
         }
 
         /// <summary>
@@ -112,12 +121,15 @@ namespace Packer
             MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndeterminate(encode, true);
             MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndicatorVisible(encode, true);
             progressBar.Visibility = Visibility.Visible;
+
             // Disables all elements so that no new operation can be done
             chooseFile.IsEnabled = false;
-            chooseDestination.IsEnabled = false;
+            destinationDirectory.IsEnabled = false;
+            destinationName.IsEnabled = false;
             encode.IsEnabled = false;
             decode.IsEnabled = false;
-            previewImg.Opacity = .2;
+
+            General.UpdateDestValues();
 
             // Sets the sender object to a Button object so that the Name of the Button is readable
             var btn = sender as Button;
@@ -133,19 +145,32 @@ namespace Packer
                     break;
             }
 
+            
+
             // Stops progress Animation of Button and Cricle
             progressBar.Visibility = Visibility.Hidden;
             MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndeterminate(encode, false);
             MaterialDesignThemes.Wpf.ButtonProgressAssist.SetIsIndicatorVisible(encode, false);
+
             // Enables all elements again
             chooseFile.IsEnabled = true;
-            chooseDestination.IsEnabled = true;
+            destinationDirectory.IsEnabled = true;
+            destinationName.IsEnabled = true;
             encode.IsEnabled = true;
             decode.IsEnabled = true;
-            previewImg.Opacity = 1;
 
             // Sets Cursor back to default
             Window.Cursor = Cursors.Arrow;
+        }
+
+        /// <summary>
+        /// Starts Unit Test
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void StartUnitTest_Click(object sender, RoutedEventArgs e)
+        {
+            await Task.Run(() => UnitTest.StartTest());
         }
     }
 }
