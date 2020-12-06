@@ -20,6 +20,10 @@
         <Style TargetType="Label">
             <Setter Property="FontSize" Value="50"/>
         </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="TextWrapping" Value="NoWrap"/>
+            <Setter Property="AcceptsReturn" Value="False"/>
+        </Style>
     </Window.Resources>
 
 
@@ -89,8 +93,6 @@
             <TextBox x:Name="destinationDirectory" 
                      Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                      MinWidth="200" 
-                     AcceptsReturn="True"
-                     TextWrapping="Wrap"
                      materialDesign:HintAssist.Hint="{DynamicResource destDir}" 
                      ToolTip="{DynamicResource destDirTip}" 
                      PreviewMouseDown="DestFolder_MouseDown"
@@ -102,8 +104,6 @@
         <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="7">
             <TextBox x:Name="destinationName" 
                      Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                     AcceptsReturn="True"
-                     TextWrapping="Wrap"
                      x:FieldModifier="public"
                      MinWidth="200" 
                      ToolTip="{DynamicResource destNameTip}" 
