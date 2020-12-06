@@ -12,17 +12,21 @@ namespace Packer
         /// </summary>
         public static void Decode()
         {
+
             // Stream for Reading
             FileStream fsRead = new FileStream(Values.source.FullName, FileMode.Open, FileAccess.Read);
             BinaryReader br = new BinaryReader(fsRead);
 
+            // Read File Name out of Header
+            ReadFileName(fsRead, br);
+
+            General.UpdateDestValues();
 
             // Stream for writing
             FileStream fsWrite = new FileStream(Values.destFilePath, FileMode.Create, FileAccess.Write);
             BinaryWriter bw = new BinaryWriter(fsWrite);
 
-            // Read File Name out of Header
-            ReadFileName(fsRead, br);
+            
 
 
             // While not at end of File
@@ -63,6 +67,7 @@ namespace Packer
             fsWrite.Flush();
             fsWrite.Close();
             bw.Close();
+
 
         }
 

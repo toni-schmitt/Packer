@@ -37,12 +37,15 @@ namespace Packer
             // Gets destination Name of TextBox of MainWindow
             // Current.Dispatcher.Invoke needs to be called cause UpdateDestValues is called from a new Thread
             // and GetDestName wants to read a value of the MainWindow wich is in a different Thread
-            string destNameText = System.Windows.Application.Current.Dispatcher.Invoke(() => GetDestName()); 
+            string destNameText = System.Windows.Application.Current.Dispatcher.Invoke(() => GetDestName());
 
-            if (HasHeader()) 
+            if (HasHeader())
                 // Creates destination File Name 
-                Values.destFileName = RemoveExtension(Values.ttpackExtension, destNameText) + Values.destFileName.Substring(Values.destFileName.LastIndexOf('.'));
-            
+                if (Values.destFileName.LastIndexOf('.') > 0)
+                    Values.destFileName = RemoveExtension(Values.ttpackExtension, destNameText) + Values.destFileName.Substring(Values.destFileName.LastIndexOf('.'));
+                else
+                    Values.destFileName = RemoveExtension(Values.ttpackExtension, destNameText);
+
             else
                 // Extension entfernen
                 Values.destFileName = RemoveExtension(Values.source.Extension, destNameText) + Values.ttpackExtension;
@@ -75,7 +78,7 @@ namespace Packer
                 if (toRemoveFrom.Substring(toRemoveFrom.LastIndexOf('.')) == extension)
                     
                     // Returns everything in front of the last '.'
-                    return toRemoveFrom.Substring(0, toRemoveFrom.LastIndexOf('.'));
+                    return toRemoveFrom.Substring(0, toRemoveFrom.LastIndexOf('.')) ;
             
             // Returns the inputted string
             return toRemoveFrom;

@@ -107,6 +107,8 @@ namespace Packer
         /// <param name="e"></param>
         private async void DeEnCode_Click(object sender, RoutedEventArgs e)
         {
+            Values.destFileName = destinationName.Text;
+
             // Sets Cursor to Wait to indicate that something is happening for User
             Window.Cursor = Cursors.Wait;
 

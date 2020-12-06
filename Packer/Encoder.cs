@@ -14,6 +14,9 @@ namespace Packer
         /// </summary>
         public static void Encode()
         {
+            
+
+            General.UpdateDestValues();
 
             // Stream for reading Original File
             FileStream fsRead = new FileStream(Values.source.FullName, FileMode.Open, FileAccess.Read);
@@ -78,6 +81,7 @@ namespace Packer
             fsWrite.Flush();
             fsWrite.Close();
             bw.Close();
+
 
         }
         private static void WriteHeader(BinaryWriter bw)
