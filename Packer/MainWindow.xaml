@@ -55,16 +55,31 @@
         
         <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1">
             <TextBlock 
+                Text="{DynamicResource header}"
                 Style="{StaticResource MaterialDesignHeadline1TextBlock}">
-                Packer - make your files smaller today
             </TextBlock>
+        </Viewbox>
+
+        
+        
+        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2" Grid.Row="1">
+            <Button x:Name="switchLang"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center" 
+                    Grid.Column="2" 
+                    Grid.Row="1" Click="SwitchLanguage">
+                <materialDesign:PackIcon 
+                    Kind="Translate"
+                />
+            </Button>
         </Viewbox>
         
         <Viewbox x:Name="chooseFileVB" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="6">
             <Button x:Name="chooseFile"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Content="Choose file " 
-                    ToolTip="Choose files you want to decode or encode"
+                    Content="{DynamicResource chooseFile}" 
+                    ToolTip="{DynamicResource chooseFileTip}"
                     MinWidth="100" 
                     Click="ChooseFile_Click" IsEnabled="True" />
         </Viewbox>
@@ -76,8 +91,8 @@
                      MinWidth="200" 
                      AcceptsReturn="True"
                      TextWrapping="Wrap"
-                     materialDesign:HintAssist.Hint="Destination Directory" 
-                     ToolTip="Optional: Click to change the output directory." 
+                     materialDesign:HintAssist.Hint="{DynamicResource destDir}" 
+                     ToolTip="{DynamicResource destDirTip}" 
                      PreviewMouseDown="DestFolder_MouseDown"
                      IsEnabled="True"
                      Visibility="Hidden"/>
@@ -91,16 +106,16 @@
                      TextWrapping="Wrap"
                      x:FieldModifier="public"
                      MinWidth="200" 
-                     ToolTip="Optional: Type in a desired name for your output file." 
+                     ToolTip="{DynamicResource destNameTip}" 
                      IsEnabled="True"
-                     materialDesign:HintAssist.Hint="Name of File to Encode / Decode"
+                     materialDesign:HintAssist.Hint="{DynamicResource destName}"
                      Visibility="Hidden"/>
         </Viewbox>
         
 
         <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="9">
             <Button x:Name="encode" 
-                    Content="Encode" 
+                    Content="{DynamicResource encode}" 
                     MinWidth="100" 
                     Click="DeEnCode_Click"
                     Visibility="Hidden" 
@@ -113,7 +128,7 @@
 
         <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="9">
             <Button x:Name="decode" 
-                    Content="Decode" 
+                    Content="{DynamicResource decode}" 
                     MinWidth="100" 
                     Click="DeEnCode_Click"
                     Visibility="Hidden" 

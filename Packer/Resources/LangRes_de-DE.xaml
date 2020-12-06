@@ -1,0 +1,22 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Packer.Resources"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+    
+    <system:String x:Key="header">Packer - mach heute deine Dateien kleiner</system:String>
+    
+    <system:String x:Key="chooseFile">Datei auswählen</system:String>
+    <system:String x:Key="chooseFileTip">Wähle eine Datei aus, die du ent- oder verpacken willst</system:String>
+    <system:String x:Key="chooseFileNew">Neue Datei auswählen</system:String>
+
+    <system:String x:Key="destDir">Ziel-Verzeichnis</system:String>
+    <system:String x:Key="destDirTip">Optional: Klicken um das Ziel-Verzeichnis auszuwählen</system:String>
+
+    <system:String x:Key="destName">Ziel-Name</system:String>
+    <system:String x:Key="destNameTip">Optional: Gebe einen Namen für die Ziel-Datei ein</system:String>
+
+    <system:String x:Key="encode">Verpacken</system:String>
+
+    <system:String x:Key="decode">Entpacken</system:String>
+    
+</ResourceDictionary>

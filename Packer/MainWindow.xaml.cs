@@ -17,11 +17,13 @@ namespace Packer
     public partial class MainWindow : Window
     {
 
+        private bool chngLang = false;
+
         public MainWindow()
         {
             InitializeComponent();
             Window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-
+            SwitchLanguage(null, null);
         }
 
 
@@ -56,7 +58,7 @@ namespace Packer
                 // Puts the Button to top position
                 midRow.Height = new GridLength(0.25, GridUnitType.Star);
                 chooseFileVB.SetValue(Grid.RowProperty, 3);
-                chooseFile.Content = "Choose new file";
+                chooseFile.Content = new DynamicResourceExtension("chooseFileNew").ProvideValue(null);
 
                 // Enables elements 
                 destinationDirectory.Visibility = Visibility.Visible;
@@ -162,6 +164,22 @@ namespace Packer
         private async void StartUnitTest_Click(object sender, RoutedEventArgs e)
         {
             await Task.Run(() => UnitTest.StartTest());
+        }
+
+        private void SwitchLanguage(object sender, RoutedEventArgs e)
+        {
+            ResourceDictionary resourceDictionary = new ResourceDictionary();
+            if (chngLang)
+            {
+                resourceDictionary.Source = new Uri("..\\Resources\\LangRes_en-EN.xaml", UriKind.Relative);
+                chngLang = false;
+            } 
+            else
+            {
+                resourceDictionary.Source = new Uri("..\\Resources\\LangRes_de-DE.xaml", UriKind.Relative);
+                chngLang = true;
+            }
+            this.Resources.MergedDictionaries.Add(resourceDictionary);
         }
     }
 }
