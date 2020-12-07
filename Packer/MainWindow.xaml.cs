@@ -124,7 +124,6 @@ namespace Packer
             encode.IsEnabled = false;
             decode.IsEnabled = false;
 
-            General.UpdateDestValues();
 
             // Sets the sender object to a Button object so that the Name of the Button is readable
             var btn = sender as Button;

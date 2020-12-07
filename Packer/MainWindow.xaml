@@ -15,7 +15,8 @@
         xmlns:local="clr-namespace:Packer"
         mc:Ignorable="d"
         Title="Packer" Height="450" Width="800"
-        x:Name="Window" Icon="minimieren.png" ResizeMode="NoResize" WindowStyle="ThreeDBorderWindow">
+        x:Name="Window" Icon="icons8-archive-100.ico" ResizeMode="NoResize" WindowStyle="ThreeDBorderWindow">
+    <!-- Global Styles for Elments -->
     <Window.Resources>
         <Style TargetType="Label">
             <Setter Property="FontSize" Value="50"/>
@@ -48,15 +49,17 @@
             <RowDefinition Height="0.25*"/>                 <!-- 10 -->
         </Grid.RowDefinitions>
 
+        <!-- Button for starting a UnitTest (obsolete) -->
         <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0">
             <Button x:Name="startUnitTest"
                     Style="{StaticResource MaterialDesignFlatButton}"
                     Content="" 
-                    MinWidth=".1" 
-                    MaxWidth=".2"
+                    MinWidth=".001" 
+                    MaxWidth=".002"
                     Click="StartUnitTest_Click"/>
         </Viewbox>
         
+        <!-- Header -->
         <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1">
             <TextBlock 
                 Text="{DynamicResource header}"
@@ -65,7 +68,7 @@
         </Viewbox>
 
         
-        
+        <!-- Button for language switching -->
         <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2" Grid.Row="1">
             <Button x:Name="switchLang"
                     Style="{StaticResource MaterialDesignFlatButton}"
@@ -79,6 +82,7 @@
             </Button>
         </Viewbox>
         
+        <!-- Button for choosing the File to encode/decode -->
         <Viewbox x:Name="chooseFileVB" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="6">
             <Button x:Name="chooseFile"
                     Style="{StaticResource MaterialDesignFlatButton}"
@@ -88,7 +92,7 @@
                     Click="ChooseFile_Click" IsEnabled="True" />
         </Viewbox>
         
-
+        <!-- TextBox for the destination Directory -->
         <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="5">
             <TextBox x:Name="destinationDirectory" 
                      Style="{StaticResource MaterialDesignFloatingHintTextBox}"
@@ -100,7 +104,7 @@
                      Visibility="Hidden"/>
         </Viewbox>
 
-
+        <!-- TestBox for the destination Name of the File -->
         <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="7">
             <TextBox x:Name="destinationName" 
                      Style="{StaticResource MaterialDesignFloatingHintTextBox}"
@@ -111,8 +115,8 @@
                      materialDesign:HintAssist.Hint="{DynamicResource destName}"
                      Visibility="Hidden"/>
         </Viewbox>
-        
 
+        <!-- Button for Encoding -->
         <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="9">
             <Button x:Name="encode" 
                     Content="{DynamicResource encode}" 
@@ -126,6 +130,7 @@
                     IsEnabled="True"/>
         </Viewbox>
 
+        <!-- Button for Decoding -->
         <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="9">
             <Button x:Name="decode" 
                     Content="{DynamicResource decode}" 
@@ -139,6 +144,7 @@
                     IsEnabled="True"/>
         </Viewbox>
 
+        <!-- ProgressBar to indicate for the User that something is happening -->
         <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="5">
             <ProgressBar x:Name="progressBar"
                     Style="{StaticResource MaterialDesignCircularProgressBar}"
