@@ -15,7 +15,7 @@ namespace Packer
         public static void Encode()
         {
             
-
+            // Updates Destination Values
             General.UpdateDestValues();
 
             // Stream for reading Original File
@@ -32,45 +32,46 @@ namespace Packer
             // Writes Header to File
             WriteHeader(bw);
 
+
+            // While not at end of file
             while (fsRead.Position < fsRead.Length)
             {
-                // Creating List for saving same values and adding Value of File at Position
-                List<byte> sameBytes = new List<byte>
-                {
-                    // First value readed
-                    br.ReadByte()
-                };
+                // First Byte will  be used for comparision
+                byte firstByte = br.ReadByte();
+                // Count of the same Bytes after First Byte
+                int sameCount = 1;
 
-                // While first readed value is same as next readed value
-                while (sameBytes[0] == br.ReadByte())
-                {
-                    // Position must be decreased by 1 bc ReadByte() increases it automatically
-                    fsRead.Position--;
-                    sameBytes.Add(br.ReadByte());
 
-                    // Stop while loop if end of file is reached
-                    if (fsRead.Position == fsRead.Length)
-                        break;
+                // While not at the second to last Position of file
+                // So that last byte can also be read
+                if (fsRead.Position < fsRead.Length - 1)
+                {
+                    // While next read byte is the same as first read byte
+                    while (fsRead.Position != fsRead.Length && firstByte == br.ReadByte())
+                        sameCount++;
+
+                    // Decreases Position by 1, bc last iteration of while-loop increases position
+                    if (fsRead.Position != fsRead.Length)
+                        fsRead.Position--;
                 }
 
-                // Decreasing Position only if not at end
-                // Else main-while-loop would still be going
-                if (fsRead.Position != fsRead.Length)
-                    fsRead.Position--;
 
-
-                if(sameBytes.Count > 3 || sameBytes[0] == Values.marker)
+                // Writes Byte in Format if there are more then 3 same bytes next to each other
+                // Or the first read Byte is the marker
+                if (sameCount > 3 || firstByte == (byte)Values.marker)
                 {
-                    // Writes in format
+                    // Writes marker as byte
                     bw.Write((byte)Values.marker);
-                    bw.Write(sameBytes.Count);
-                    bw.Write(sameBytes[0]);
+                    // Writes count of bytes as Int32
+                    bw.Write(sameCount);
+                    // Writes byte
+                    bw.Write(firstByte);
                 }
+                // Else writes all Bytes one after another
                 else
-                    // Writes normal
-                    for(int count = 0; count < sameBytes.Count; count++)
-                        bw.Write(sameBytes[count]);
-                
+                    for (int count = 0; count < sameCount; count++)
+                        bw.Write(firstByte);
+
             }
 
             // Closes all Streams
