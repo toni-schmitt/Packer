@@ -20,4 +20,7 @@
 
     <system:String x:Key="decode">Entpacken</system:String>
 
+    <system:String x:Key="done">Abgeschlossen</system:String>
+    <system:String x:Key="close">Schliessen</system:String>
+
 </ResourceDictionary>

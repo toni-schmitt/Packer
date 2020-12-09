@@ -17,7 +17,9 @@
     <system:String x:Key="destNameTip">Optional: Type in a desired name for your output file.</system:String>
 
     <system:String x:Key="encode">Encode</system:String>
-
     <system:String x:Key="decode">Decode</system:String>
+
+    <system:String x:Key="done">Done</system:String>
+    <system:String x:Key="close">Close</system:String>
 
 </ResourceDictionary>
