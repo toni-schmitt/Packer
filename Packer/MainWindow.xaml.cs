@@ -18,12 +18,31 @@ namespace Packer
     {
 
         private bool chngLang = false;
+        private readonly ResourceDictionary resourceDictionary = new ResourceDictionary();
 
         public MainWindow()
         {
             InitializeComponent();
             Window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             SwitchLanguage(null, null);
+        }
+
+
+        /// <summary>
+        /// Sets Window back to Startup-Layout
+        /// </summary>
+        private void StartupWindow()
+        {
+            // Puts Hiegh of middle Row back to 2
+            midRow.Height = new GridLength(2, GridUnitType.Star);
+            // Puts ChooseFile Button to middle
+            chooseFileVB.SetValue(Grid.RowProperty, 6);
+
+            // Hides all other elements
+            destinationDirectory.Visibility = Visibility.Hidden;
+            destinationName.Visibility = Visibility.Hidden;
+            decode.Visibility = Visibility.Hidden;
+            encode.Visibility = Visibility.Hidden;
         }
 
 
@@ -107,6 +126,7 @@ namespace Packer
         /// <param name="e"></param>
         private async void DeEnCode_Click(object sender, RoutedEventArgs e)
         {
+
             Values.destFileName = destinationName.Text;
 
             // Sets Cursor to Wait to indicate that something is happening for User
@@ -155,10 +175,23 @@ namespace Packer
 
             // Sets Cursor back to default
             Window.Cursor = Cursors.Arrow;
+
+            // Initializes new MessageBox Object
+            MessageBox mb = new MessageBox(resourceDictionary);
+
+            // Shows MessageBox
+            mb.Show();
+
+            // Awaits 1 Second
+            await Task.Run(() => System.Threading.Thread.Sleep(1000));
+
+            // Sets MainWindow back to StartupLayout
+            StartupWindow();
+            
         }
 
         /// <summary>
-        /// Starts Unit Test
+        /// Starts Unit Test (Obsolete)
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -167,9 +200,14 @@ namespace Packer
             await Task.Run(() => UnitTest.StartTest());
         }
 
+
+        /// <summary>
+        /// Switches language
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SwitchLanguage(object sender, RoutedEventArgs e)
         {
-            ResourceDictionary resourceDictionary = new ResourceDictionary();
             if (chngLang)
             {
                 resourceDictionary.Source = new Uri("..\\Resources\\LangRes_en-EN.xaml", UriKind.Relative);
