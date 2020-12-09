@@ -8,6 +8,7 @@ namespace Packer
 {
     static class Encoder
     {
+        private static long fsReadLength;
 
         /// <summary>
         /// Decreases size of a file throug encoding
@@ -22,6 +23,8 @@ namespace Packer
             FileStream fsRead = new FileStream(Values.source.FullName, FileMode.Open, FileAccess.Read);
             BinaryReader br = new BinaryReader(fsRead);
 
+            fsReadLength = fsRead.Length;
+
             // Stream for writing Encoded File
             FileStream fsWrite = new FileStream(Values.destFilePath, FileMode.Create, FileAccess.Write);
             BinaryWriter bw = new BinaryWriter(fsWrite);
@@ -34,7 +37,7 @@ namespace Packer
 
 
             // While not at end of file
-            while (fsRead.Position < fsRead.Length)
+            while (fsRead.Position < fsReadLength)
             {
                 // First Byte will  be used for comparision
                 byte firstByte = br.ReadByte();
@@ -44,14 +47,14 @@ namespace Packer
 
                 // While not at the second to last Position of file
                 // So that last byte can also be read
-                if (fsRead.Position < fsRead.Length - 1)
+                if (fsRead.Position < fsReadLength - 1)
                 {
                     // While next read byte is the same as first read byte
-                    while (fsRead.Position != fsRead.Length && firstByte == br.ReadByte())
+                    while (fsRead.Position != fsReadLength && firstByte == br.ReadByte())
                         sameCount++;
 
                     // Decreases Position by 1, bc last iteration of while-loop increases position
-                    if (fsRead.Position != fsRead.Length)
+                    if (fsRead.Position != fsReadLength)
                         fsRead.Position--;
                 }
 
@@ -98,7 +101,7 @@ namespace Packer
         private static int SearchForMarker(FileStream fsRead, BinaryReader br)
         {
             int[] ascii = new int[256];
-            while (fsRead.Position < fsRead.Length)
+            while (fsRead.Position < fsReadLength)
                 ascii[br.ReadByte()]++;
             fsRead.Position = 0;
             return Array.IndexOf(ascii, ascii.Min());

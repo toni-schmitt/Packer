@@ -7,6 +7,8 @@ namespace Packer
     public static class Decoder
     {
 
+        private static long fsReadLength;
+
         /// <summary>
         /// Decodes the File
         /// </summary>
@@ -16,6 +18,10 @@ namespace Packer
             // Stream for Reading
             FileStream fsRead = new FileStream(Values.source.FullName, FileMode.Open, FileAccess.Read);
             BinaryReader br = new BinaryReader(fsRead);
+
+            // Saves Length of FileStream to a Variable
+            // Makes the program run faster
+            fsReadLength = fsRead.Length;
 
             // Read File Name out of Header
             ReadFileName(fsRead, br);
@@ -30,24 +36,17 @@ namespace Packer
 
 
             // While not at end of File
-            while (fsRead.Position < fsRead.Length)
+            while (fsRead.Position < fsReadLength)
             {
                 // Variable for Character and the count of the Character
                 int count = 1;
-                byte character;
+                byte character = br.ReadByte();
 
                 
-                if (br.ReadByte() == Values.marker)
+                if (character == Values.marker)
                 {// If Marker found
                     // Read Count of Character
                     count = br.ReadInt32();
-                    // Read Character
-                    character = br.ReadByte();
-                }
-                else
-                {// If no Marker found
-                    // Decrease Position because br.ReadByte() has increased Position by 1
-                    fsRead.Position--;
                     // Read Character
                     character = br.ReadByte();
                 }
