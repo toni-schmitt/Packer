@@ -57,13 +57,14 @@ namespace Packer
             }
 
 
-            
-            // Closing Streams
+
+            // Flushes all Streams
             fsRead.Flush();
+            fsWrite.Flush();
+
+            // Closes all Streams
             fsRead.Close();
             br.Close();
-
-            fsWrite.Flush();
             fsWrite.Close();
             bw.Close();
 

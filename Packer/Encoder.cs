@@ -77,17 +77,24 @@ namespace Packer
 
             }
 
-            // Closes all Streams
+            // Flushes all Streams
             fsRead.Flush();
+            fsWrite.Flush();
+
+            // Closes all Streams
             fsRead.Close();
             br.Close();
-
-            fsWrite.Flush();
             fsWrite.Close();
             bw.Close();
 
 
         }
+
+
+        /// <summary>
+        /// Writes header in file
+        /// </summary>
+        /// <param name="bw"> BinaryWriter to write header to </param>
         private static void WriteHeader(BinaryWriter bw)
         {
             bw.Write(Encoding.ASCII.GetBytes(Values.header));
@@ -97,12 +104,19 @@ namespace Packer
         }
 
 
-
+        /// <summary>
+        /// Searches for least used value to use as marker
+        /// </summary>
+        /// <param name="fsRead"> FileStream to read marker from </param>
+        /// <param name="br"> BinaryReder of FileStream </param>
+        /// <returns> Index of least used value </returns>
         private static int SearchForMarker(FileStream fsRead, BinaryReader br)
         {
+            // Array with every ASCII-Sign as Index
             int[] ascii = new int[256];
             while (fsRead.Position < fsReadLength)
                 ascii[br.ReadByte()]++;
+            // Resets Position
             fsRead.Position = 0;
             return Array.IndexOf(ascii, ascii.Min());
         }
