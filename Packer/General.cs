@@ -32,14 +32,14 @@ namespace Packer
         /// <summary>
         /// Updates destination Values like destination-File-Path and so on
         /// </summary>
-        public static void UpdateDestValues()
+        public static void UpdateDestValues(bool hasHeader)
         {
             // Gets destination Name of TextBox of MainWindow
             // Current.Dispatcher.Invoke needs to be called cause UpdateDestValues is called from a new Thread
             // and GetDestName wants to read a value of the MainWindow wich is in a different Thread
             string destNameText = System.Windows.Application.Current.Dispatcher.Invoke(() => GetDestName());
 
-            if (HasHeader())
+            if (hasHeader)
                 // Creates destination File Name 
                 if (Values.destFileName.LastIndexOf('.') > 0)
                     Values.destFileName = RemoveExtension(Values.ttpackExtension, destNameText) + Values.destFileName.Substring(Values.destFileName.LastIndexOf('.'));

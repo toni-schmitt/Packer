@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Microsoft.WindowsAPICodePack;
 
 // Dont use these Using directives or elese some Options like Cursor are not going to work
 // Some Classes are in both directives
@@ -60,7 +61,6 @@ namespace Packer
                 Filter = "All Files (*.*) | *.*; | TTPACK Files (*.ttpack) | *.ttpack; | Bitmap Images (*.bmp) | *.bmp; | Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png) | *.jpg; *.jpeg; *.jpe; *.jfif; *.png",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
             };
-
             // Show FileDialog
             if (fileDialog.ShowDialog() == true)
             {
@@ -82,7 +82,7 @@ namespace Packer
                 // Enables elements 
                 destinationDirectory.Visibility = Visibility.Visible;
                 destinationName.Visibility = Visibility.Visible;
-                
+
                 // Shows appropriate Options
                 // for example if File can be Encoded only show Encode Option
                 if (General.HasHeader())
@@ -107,13 +107,18 @@ namespace Packer
         /// <param name="e"></param>
         private void DestFolder_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            // Opens Dialog to choose a Folder
-            System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
-            
-            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {// If File is selected (User clicked on OK)
-                // Updates destination Values
-                Values.destFileDirectory = dialog.SelectedPath;
+
+            Microsoft.WindowsAPICodePack.Dialogs.CommonOpenFileDialog openFileDialog = new Microsoft.WindowsAPICodePack.Dialogs.CommonOpenFileDialog
+            {
+                IsFolderPicker = true,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                Multiselect = false
+            };
+
+
+            if (openFileDialog.ShowDialog() == Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogResult.Ok)
+            {
+                Values.destFileDirectory = openFileDialog.FileName;
                 destinationDirectory.Text = Values.destFileDirectory;
             }
         }
@@ -159,7 +164,7 @@ namespace Packer
                     break;
             }
 
-            
+
 
             // Stops progress Animation of Button and Cricle
             progressBar.Visibility = Visibility.Hidden;
@@ -187,7 +192,7 @@ namespace Packer
 
             // Sets MainWindow back to StartupLayout
             StartupWindow();
-            
+
         }
 
         /// <summary>
@@ -212,7 +217,7 @@ namespace Packer
             {
                 resourceDictionary.Source = new Uri("..\\Resources\\LangRes_en-EN.xaml", UriKind.Relative);
                 chngLang = false;
-            } 
+            }
             else
             {
                 resourceDictionary.Source = new Uri("..\\Resources\\LangRes_de-DE.xaml", UriKind.Relative);
