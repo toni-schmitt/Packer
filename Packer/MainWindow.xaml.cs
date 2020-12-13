@@ -18,13 +18,16 @@ namespace Packer
     public partial class MainWindow : Window
     {
 
-        private bool chngLang = false;
-        private readonly ResourceDictionary resourceDictionary = new ResourceDictionary();
+        // Variables for changing the language
+        private bool engLangSelected = false;
+        private readonly ResourceDictionary resourceDictionary = new ResourceDictionary();  // Language-XAML-File will be saved in ResourceDictionry
+
 
         public MainWindow()
         {
             InitializeComponent();
             Window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            // Sets Language on initialization to german
             SwitchLanguage(null, null);
         }
 
@@ -61,18 +64,20 @@ namespace Packer
                 Filter = "All Files (*.*) | *.*; | TTPACK Files (*.ttpack) | *.ttpack; | Bitmap Images (*.bmp) | *.bmp; | Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png) | *.jpg; *.jpeg; *.jpe; *.jfif; *.png",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
             };
+
             // Show FileDialog
             if (fileDialog.ShowDialog() == true)
-            {
+            {// If OK in FileDialog was clicked
+
 
                 Values.source = new System.IO.FileInfo(fileDialog.FileName);
+                Values.destinationDirectory = Values.source.DirectoryName;
 
-                Values.destFileDirectory = Values.source.DirectoryName;
-
+                
 
                 // Destination Directory is Source Directory by default
                 destinationName.Text = Values.source.Name;
-                destinationDirectory.Text = Values.destFileDirectory;
+                destinationDirectory.Text = Values.destinationDirectory;
 
                 // Puts the Button to top position
                 midRow.Height = new GridLength(0.25, GridUnitType.Star);
@@ -111,15 +116,15 @@ namespace Packer
             Microsoft.WindowsAPICodePack.Dialogs.CommonOpenFileDialog openFileDialog = new Microsoft.WindowsAPICodePack.Dialogs.CommonOpenFileDialog
             {
                 IsFolderPicker = true,
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                InitialDirectory = Values.source.DirectoryName,
                 Multiselect = false
             };
 
 
             if (openFileDialog.ShowDialog() == Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogResult.Ok)
             {
-                Values.destFileDirectory = openFileDialog.FileName;
-                destinationDirectory.Text = Values.destFileDirectory;
+                Values.destinationDirectory = openFileDialog.FileName;
+                destinationDirectory.Text = Values.destinationDirectory;
             }
         }
 
@@ -132,7 +137,6 @@ namespace Packer
         private async void DeEnCode_Click(object sender, RoutedEventArgs e)
         {
 
-            Values.destFileName = destinationName.Text;
 
             // Sets Cursor to Wait to indicate that something is happening for User
             Window.Cursor = Cursors.Wait;
@@ -150,10 +154,9 @@ namespace Packer
             decode.IsEnabled = false;
 
 
-            // Sets the sender object to a Button object so that the Name of the Button is readable
-            var btn = sender as Button;
+            
             // En- or Decodes depeding on the Button Name
-            switch (btn.Name)
+            switch ((sender as Button).Name)    // Sets the sender object to a Button object so that the Name of the Button is readable
             {
                 // Awaits Method asynchronously so that the window does not freeze
                 case "encode":
@@ -213,15 +216,15 @@ namespace Packer
         /// <param name="e"></param>
         private void SwitchLanguage(object sender, RoutedEventArgs e)
         {
-            if (chngLang)
+            if (engLangSelected)
             {
                 resourceDictionary.Source = new Uri("..\\Resources\\LangRes_en-EN.xaml", UriKind.Relative);
-                chngLang = false;
+                engLangSelected = false;
             }
             else
             {
                 resourceDictionary.Source = new Uri("..\\Resources\\LangRes_de-DE.xaml", UriKind.Relative);
-                chngLang = true;
+                engLangSelected = true;
             }
             this.Resources.MergedDictionaries.Add(resourceDictionary);
         }

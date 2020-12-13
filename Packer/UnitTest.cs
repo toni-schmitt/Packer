@@ -141,7 +141,7 @@ namespace Packer
 
             UpdateValues(checkFile, 2);
 
-            FileStream fsReadRef = new FileStream(Values.destFilePath, FileMode.Open, FileAccess.Read);
+            FileStream fsReadRef = new FileStream(Values.destinationPath, FileMode.Open, FileAccess.Read);
             BinaryReader brRef = new BinaryReader(fsReadRef);
 
             while (fsReadCheck.Position < fsReadCheck.Length && fsReadRef.Position < fsReadRef.Length)
@@ -159,9 +159,9 @@ namespace Packer
         private static void UpdateValues(FileInfo info, int directory)
         {
             Values.source = info;
-            Values.destFileName = info.Name;
-            Values.destFileDirectory = dirs[++directory] + "\\";
-            Values.destFilePath = Values.destFileDirectory + Values.destFileName;
+            Values.destinationFileName = info.Name;
+            Values.destinationDirectory = dirs[++directory] + "\\";
+            Values.destinationPath = Values.destinationDirectory + Values.destinationFileName;
         }
     }
 }

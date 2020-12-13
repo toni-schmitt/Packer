@@ -2,19 +2,23 @@
 {
     public static class Values
     {
-        // FileInfo for source File
-        public static System.IO.FileInfo source;
+        // Infos for source and destination file
+        public static System.IO.FileInfo source;    // FileInfo for source file
 
-        // Values for destination file
-        public static string destFilePath;
-        public static string destFileDirectory;
-        public static string destFileName;
+        public static string destinationPath;          // Path of destination file
+        public static string destinationDirectory;     // Directory of destination
+        public static string destinationFileName;          // File Name of destination
 
-        // Marker used
+
+        // Variable for marker 
         public static char marker;
 
         // Values for header
-        public static string header = "ttpack";
-        public static string ttpackExtension = ".ttpack";
+        public static string magicNbr = "ttpack";           // Magic Number of .ttpack-files
+        public static string ttpackExtension = ".ttpack";   // File Extension of Encoded files
+        public static int maxNameLength = 8;                // Max Length of original File in header
+        public static char endOfHeader = '\0';              // End of header
+
+        public static char dot = '.';
     }
 }
