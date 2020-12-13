@@ -26,15 +26,13 @@ namespace Packer
             // Read File Name out of Header
             ReadFileName(fsRead, br);
 
-            General.UpdateDestValues();
+            General.UpdateDestValues(true);
 
             // Stream for writing
-            FileStream fsWrite = new FileStream(Values.destFilePath, FileMode.Create, FileAccess.Write);
+            FileStream fsWrite = new FileStream(Values.destinationPath, FileMode.Create, FileAccess.Write);
             BinaryWriter bw = new BinaryWriter(fsWrite);
 
             
-
-
             // While not at end of File
             while (fsRead.Position < fsReadLength)
             {
@@ -46,7 +44,7 @@ namespace Packer
                 if (character == Values.marker)
                 {// If Marker found
                     // Read Count of Character
-                    count = br.ReadInt32();
+                    count = System.Convert.ToInt32(br.ReadByte());
                     // Read Character
                     character = br.ReadByte();
                 }
@@ -55,7 +53,6 @@ namespace Packer
                 for (int index = 0; index < count; index++)
                     bw.Write(character);
             }
-
 
 
             // Flushes all Streams
@@ -83,12 +80,19 @@ namespace Packer
 
             // Checking if File to read has Header
             // SequenceEqual checks if values of two arrays are the same
-            if (Enumerable.SequenceEqual(br.ReadBytes(Values.header.Length), Encoding.ASCII.GetBytes(Values.header))) {
-            
+            if (Enumerable.SequenceEqual(br.ReadBytes(Values.magicNbr.Length), Encoding.ASCII.GetBytes(Values.magicNbr))) 
+            {
                 // Read marker out of Header
                 Values.marker = (char)br.ReadByte();
                 // Read original Name out of Header
-                Values.destFileName = Encoding.ASCII.GetString(br.ReadBytes(br.ReadInt32()));
+                Values.destinationFileName = Encoding.ASCII.GetString(br.ReadBytes(Values.maxNameLength));
+                
+                // Gets Extension
+                while (br.ReadByte() != (byte)Values.endOfHeader) // While not at end of header
+                {
+                    fsRead.Position--;
+                    Values.destinationFileName += (char)br.ReadByte();
+                } 
 
             }
         }

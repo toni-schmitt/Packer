@@ -8,6 +8,7 @@ namespace Packer
 {
     static class Encoder
     {
+        // Variable for saving Lenght of FileStream
         private static long fsReadLength;
 
         /// <summary>
@@ -15,18 +16,20 @@ namespace Packer
         /// </summary>
         public static void Encode()
         {
-            
+
             // Updates Destination Values
-            General.UpdateDestValues();
+            General.UpdateDestValues(false);
 
             // Stream for reading Original File
             FileStream fsRead = new FileStream(Values.source.FullName, FileMode.Open, FileAccess.Read);
             BinaryReader br = new BinaryReader(fsRead);
 
+            // Saves Length to variable for optimization 
+            // else getter of FileStream object needs to be called often
             fsReadLength = fsRead.Length;
 
             // Stream for writing Encoded File
-            FileStream fsWrite = new FileStream(Values.destFilePath, FileMode.Create, FileAccess.Write);
+            FileStream fsWrite = new FileStream(Values.destinationPath, FileMode.Create, FileAccess.Write);
             BinaryWriter bw = new BinaryWriter(fsWrite);
 
             // Searches least used value in File and sets it to Marker
@@ -50,7 +53,7 @@ namespace Packer
                 if (fsRead.Position < fsReadLength - 1)
                 {
                     // While next read byte is the same as first read byte
-                    while (fsRead.Position != fsReadLength && firstByte == br.ReadByte())
+                    while (fsRead.Position != fsReadLength && firstByte == br.ReadByte() && sameCount < 255)
                         sameCount++;
 
                     // Decreases Position by 1, bc last iteration of while-loop increases position
@@ -66,7 +69,7 @@ namespace Packer
                     // Writes marker as byte
                     bw.Write((byte)Values.marker);
                     // Writes count of bytes as Int32
-                    bw.Write(sameCount);
+                    bw.Write((byte)sameCount);
                     // Writes byte
                     bw.Write(firstByte);
                 }
@@ -97,10 +100,43 @@ namespace Packer
         /// <param name="bw"> BinaryWriter to write header to </param>
         private static void WriteHeader(BinaryWriter bw)
         {
-            bw.Write(Encoding.ASCII.GetBytes(Values.header));
-            bw.Write((byte)Values.marker);
-            bw.Write(Values.source.Name.Length);
-            bw.Write(Encoding.ASCII.GetBytes(Values.source.Name));
+            // Write header to file
+            bw.Write(Encoding.ASCII.GetBytes(Values.magicNbr));         // Magic Number for ttpack-identification
+            bw.Write((byte)Values.marker);                              // Used marker
+            bw.Write(Encoding.ASCII.GetBytes(CreateFileName()));        // Sutiable File-Name (8 byte long) for header
+            bw.Write(Encoding.ASCII.GetBytes(Values.source.Extension)); // Extension of original file
+            bw.Write((byte)Values.endOfHeader);                         // End of header
+        }
+
+
+        /// <summary>
+        /// Creates sutiable file name for header (8 byte long)
+        /// </summary>
+        /// <returns> new file name to write to header </returns>
+        private static string CreateFileName()
+        {
+            // Gets last Index of dot character in SourceName
+            int lastIndexOfDot = Values.source.Name.LastIndexOf(Values.dot);
+            // StringBuilder for source Name that will later be added to header
+            StringBuilder sourceNameSub = new StringBuilder(Values.source.Name);
+
+
+            // Removes extension
+            if (lastIndexOfDot > 0)
+                if (Values.source.Name.Substring(lastIndexOfDot) == Values.source.Extension) // If substring that starts at last Index of dot is extension
+                    // Remove Extension
+                    sourceNameSub.Remove(lastIndexOfDot, Values.source.Extension.Length);
+
+
+            // Ensures length of name is exactly 8
+            if (sourceNameSub.Length < Values.maxNameLength) // If sourceName without extension is lower then 8
+                // Replace empty chars with '-'
+                sourceNameSub.Append('-', (Values.maxNameLength - sourceNameSub.Length));
+            else
+                // Remove everything from 8
+                sourceNameSub.Remove(Values.maxNameLength, (sourceNameSub.Length - Values.maxNameLength));
+
+            return sourceNameSub.ToString();
         }
 
 
@@ -114,13 +150,16 @@ namespace Packer
         {
             // Array with every ASCII-Sign as Index
             int[] ascii = new int[256];
+
             while (fsRead.Position < fsReadLength)
                 ascii[br.ReadByte()]++;
+
             // Resets Position
             fsRead.Position = 0;
+
             return Array.IndexOf(ascii, ascii.Min());
         }
 
-        
+
     }
 }

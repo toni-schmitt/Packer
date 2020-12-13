@@ -9,7 +9,7 @@ namespace Packer
         /// <summary>
         /// Checks if file has a Header
         /// </summary>
-        /// <returns>true if file has header, false if file has no header</returns>
+        /// <returns> true if file has header, false if file has no header </returns>
         public static bool HasHeader()
         {
             // Opening Streams
@@ -17,7 +17,7 @@ namespace Packer
             BinaryReader br = new BinaryReader(fsRead);
 
             // Write to variable bc Streams need to be closed before returning value
-            byte[] header = br.ReadBytes(Values.header.Length);
+            byte[] header = br.ReadBytes(Values.magicNbr.Length);
 
             // Closing Streams
             fsRead.Flush();
@@ -25,13 +25,14 @@ namespace Packer
             br.Close();
 
             // SequenceEqual compares two arrays and checks if the values are the same
-            return Enumerable.SequenceEqual(header, Encoding.ASCII.GetBytes(Values.header));
+            return Enumerable.SequenceEqual(header, Encoding.ASCII.GetBytes(Values.magicNbr));
         }
 
 
         /// <summary>
         /// Updates destination Values like destination-File-Path and so on
         /// </summary>
+        /// <param name="hasHeader"> if file has header </param>
         public static void UpdateDestValues(bool hasHeader)
         {
             // Gets destination Name of TextBox of MainWindow
@@ -39,18 +40,20 @@ namespace Packer
             // and GetDestName wants to read a value of the MainWindow wich is in a different Thread
             string destNameText = System.Windows.Application.Current.Dispatcher.Invoke(() => GetDestName());
 
-            if (hasHeader)
+
+            if (hasHeader && destNameText != Values.source.Name)
                 // Creates destination File Name 
-                if (Values.destFileName.LastIndexOf('.') > 0)
-                    Values.destFileName = RemoveExtension(Values.ttpackExtension, destNameText) + Values.destFileName.Substring(Values.destFileName.LastIndexOf('.'));
+                if (Values.destinationFileName.LastIndexOf(Values.dot) > 0)
+                    Values.destinationFileName = RemoveExtension(destNameText, Values.ttpackExtension) + Values.destinationFileName.Substring(Values.destinationFileName.LastIndexOf(Values.dot));
                 else
-                    Values.destFileName = RemoveExtension(Values.ttpackExtension, destNameText);
+                    Values.destinationFileName = RemoveExtension(destNameText, Values.ttpackExtension);
 
-            else
+            else if (!hasHeader)
                 // Extension entfernen
-                Values.destFileName = RemoveExtension(Values.source.Extension, destNameText) + Values.ttpackExtension;
+                Values.destinationFileName = RemoveExtension(destNameText, Values.source.Extension) + Values.ttpackExtension;
 
-            Values.destFilePath = Values.destFileDirectory + "\\" + Values.destFileName;
+
+            Values.destinationPath = Values.destinationDirectory + "\\" + Values.destinationFileName;
         }
 
         /// <summary>
@@ -66,20 +69,20 @@ namespace Packer
         /// <summary>
         /// Removes extension from a string
         /// </summary>
-        /// <param name="extension">extension to remove</param>
-        /// <param name="toRemoveFrom">string to remove the extension from</param>
-        /// <returns></returns>
-        private static string RemoveExtension(string extension, string toRemoveFrom)
+        /// <param name="toRemoveFrom"> string to remove the extension from </param>
+        /// <param name="extensionToRemove"> extension to remove </param>
+        /// <returns> string without extension </returns>
+        private static string RemoveExtension(string toRemoveFrom, string extensionToRemove)
         {
             // If string has a '.'
-            if (toRemoveFrom.LastIndexOf('.') > 0)
+            if (toRemoveFrom.LastIndexOf(Values.dot) > 0)
                 // If Substring is the same as extension
                 // Substring removes everything after the last '.'
-                if (toRemoveFrom.Substring(toRemoveFrom.LastIndexOf('.')) == extension)
-                    
+                if (toRemoveFrom.Substring(toRemoveFrom.LastIndexOf(Values.dot)) == extensionToRemove)
+
                     // Returns everything in front of the last '.'
-                    return toRemoveFrom.Substring(0, toRemoveFrom.LastIndexOf('.')) ;
-            
+                    return toRemoveFrom.Substring(0, toRemoveFrom.LastIndexOf(Values.dot));
+
             // Returns the inputted string
             return toRemoveFrom;
         }
