@@ -105,20 +105,22 @@ namespace Packer
 
                     results.Add(result);
 
-                    System.Windows.Application.Current.Dispatcher.Invoke(() => {
-                        MessageBox mb = new MessageBox();
-                        mb.text.Text = "Done with file " + file.Name;
-                        mb.Show();
-                    });
+                    
 
                     
                 }
+
+                System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                    MessageBox mb = new MessageBox();
+                    mb.text.Text = "Done with test" + chooseOperation;
+                    mb.Show();
+                });
 
             }
 
             System.Windows.Application.Current.Dispatcher.Invoke(() => {
                 MessageBox mb = new MessageBox();
-                mb.text.Text = "Writing results files now";
+                mb.text.Text = "Writing result files now";
                 mb.Show();
             });
 
@@ -172,7 +174,7 @@ namespace Packer
 
             System.Windows.Application.Current.Dispatcher.Invoke(() => {
                 MessageBox mb = new MessageBox();
-                mb.text.Text = "Done with file results files";
+                mb.text.Text = "Done with writing of result files";
                 mb.Show();
             });
 

@@ -111,7 +111,6 @@
     <Compile Include="MessageBox.xaml.cs">
       <DependentUpon>MessageBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="cd.cs" />
     <Compile Include="UnitTest.cs" />
     <Compile Include="UnitTestWindow.xaml.cs">
       <DependentUpon>UnitTestWindow.xaml</DependentUpon>
