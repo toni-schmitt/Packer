@@ -40,7 +40,7 @@ namespace Packer
 
 
             // While not at end of file
-            while (fsRead.Position < fsReadLength)
+            while (fsRead.Position != fsReadLength)
             {
                 // First Byte will  be used for comparision
                 byte firstByte = br.ReadByte();
@@ -56,9 +56,8 @@ namespace Packer
                     while (fsRead.Position != fsReadLength && firstByte == br.ReadByte() && sameCount < 255)
                         sameCount++;
 
-                    // Decreases Position by 1, bc last iteration of while-loop increases position
-                    if (fsRead.Position != fsReadLength)
-                        fsRead.Position--;
+                    // Decreases Position by 1
+                    fsRead.Position--;
                 }
 
 
