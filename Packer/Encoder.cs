@@ -50,7 +50,7 @@ namespace Packer
 
                 // While not at the second to last Position of file
                 // So that last byte can also be read
-                if (fsRead.Position < fsReadLength - 1)
+                if (fsRead.Position < fsReadLength)
                 {
                     // While next read byte is the same as first read byte
                     while (fsRead.Position != fsReadLength && firstByte == br.ReadByte() && sameCount < 255)
