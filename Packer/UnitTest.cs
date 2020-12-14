@@ -1,167 +1,205 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.IO;
 
 namespace Packer
 {
-    static class UnitTest
+    public static class UnitTest
     {
-        private static readonly string exsDir = "C:\\Users\\tonis\\Desktop\\Packer-Test\\extensive"; // Direcotry Root
-        private static readonly string orgDir = exsDir + "\\org"; // Directory with original files
-        private static readonly string refDir = exsDir + "\\ref"; // Directory with reference files for later tests
-        private static readonly string entDir = exsDir + "\\ent"; // Directory with unzipped files
-        private static readonly string verDir = exsDir + "\\ver"; // Directory with zipped files
+        public static string _directory;
+        public static string SetDirectory { set { _directory = value; } }
 
-        // List for directorys where the UnitTest happens
-        static readonly List<string> dirs = new List<string> {
-            orgDir, verDir, entDir, refDir
-        };
+        private static readonly char _colon = ':';
 
-        /// <summary>
-        /// Starts the UnitTest
-        /// </summary>
+
+
         public static void StartTest()
         {
+            // Encode or Decode or Encode and Decode
+            // Get Files
+            // Do it for every file
+            // Save time
 
-            // Stopwatch to measure time the Test took
-            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-            stopwatch.Start();
+            // First File of Dir = source
+            // destDir = sourceDir
+            // destName.Text = source.Name
 
-            // Deletes old Files of verDir and entDir
-            DelFiles();
+            // UPDATEDESTVALUES:
+            //  ENCODING:
+            //      destFileName = destName.Text + .ttpack
+            //  DECODING:
+            //      destFileName = read from header
+            //  destPath = destDir + destFileName
 
-            // Dictionarys for saving test-results
-            Dictionary<string, string> orgFileInfo = new Dictionary<string, string>();
-            Dictionary<string, string> verFileInfo = new Dictionary<string, string>();
-            Dictionary<string, string> entFileInfo = new Dictionary<string, string>();
-            Dictionary<string, bool> areSame = new Dictionary<string, bool>();
 
-            for (int directory = 0; directory < dirs.Count; directory++)
+            FileInfo[] info = new DirectoryInfo(_directory).GetFiles();
+            Random rnd = new Random();
+            foreach (FileInfo file in info)
             {
-                // All Files in current directory
-                FileInfo[] dirFiles = new DirectoryInfo(dirs[directory]).GetFiles();
+                int rndNbrsAmount = rnd.Next(4, 20);
+                string rndNbr = "";
+                for (int i = 0; i < rndNbrsAmount; i++)
+                    rndNbr += rnd.Next(0, 10);
 
-                // For every file in dirFile
-                for (int index = 0; index < dirFiles.Length; index++)
+
+                string newFileName = "ut" + file.Name.ToArray()[0] + file.Name.ToArray()[1] + file.Name.ToArray()[2] + rndNbr + file.Extension;
+
+                File.Move(file.FullName, Path.Combine(file.DirectoryName, newFileName));
+            }
+
+
+            List<StringBuilder> results = new List<StringBuilder>();
+
+            for (int chooseOperation = 0; chooseOperation < 2; chooseOperation++)
+            {
+                FileInfo[] files = null;
+                switch (chooseOperation)
                 {
+                    case 0:
+                        files = new DirectoryInfo(_directory).GetFiles();
+                        break;
+                    case 1:
+                        files = new DirectoryInfo(_directory).GetFiles("*.ttpack");
+                        break;
+                }
 
+                foreach (FileInfo file in files)
+                {
+                    StringBuilder result = new StringBuilder();
 
-                    switch (directory)
+                    Values.source = file;
+                    Values.destinationDirectory = Values.source.DirectoryName;
+                    System.Windows.Application.Current.Dispatcher.Invoke(() => System.Windows.Application.Current.Windows.OfType<MainWindow>().First().destinationName.Text = Values.source.Name);
+
+                    var timer = new System.Diagnostics.Stopwatch();
+                    timer.Start();
+
+                    switch (chooseOperation)
                     {
-
-                        case 0: // Encode
-                            orgFileInfo.Add(dirFiles[index].Name, dirFiles[index].Length.ToString());
-
-                            UpdateValues(dirFiles[index], directory);
+                        case 0:
                             Encoder.Encode();
-
-                            verFileInfo.Add(new DirectoryInfo(dirs[directory + 1]).GetFiles()[index].Name, new DirectoryInfo(dirs[directory + 1]).GetFiles()[index].Length.ToString());
+                            result.Append("encoding").Append(_colon);
                             break;
-
-
-                        case 1: // Decode
-                            UpdateValues(dirFiles[index], directory);
+                        case 1:
                             Decoder.Decode();
-
-                            entFileInfo.Add(new DirectoryInfo(dirs[directory + 1]).GetFiles()[index].Name, new DirectoryInfo(dirs[directory + 1]).GetFiles()[index].Length.ToString());
+                            result.Append("decoding").Append(_colon);
                             break;
-
-
-                        case 2: // Test
-                            areSame.Add(dirFiles[index].Name, IsSameAs(dirFiles[index]));
-                            break;
-
                     }
 
+                    timer.Stop();
+
+
+                    long orgLength = file.Length;
+                    long newLength = new FileInfo(Values.destinationPath).Length;
+                    long differenceLenghts = orgLength - newLength;
+
+                    result.Append(file.Name).Append(_colon)
+                        .Append(file.Extension).Append(_colon)
+                        .Append(string.Format("{0:D2}:{1:D2}:{2:D2}:{3:D2}:{4:D3}", timer.Elapsed.Days, timer.Elapsed.Hours, timer.Elapsed.Minutes, timer.Elapsed.Seconds, timer.Elapsed.Milliseconds)).Append(_colon)
+                        .Append(orgLength).Append(_colon)
+                        .Append(newLength).Append(_colon)
+                        .Append(differenceLenghts);
+
+                    results.Add(result);
+
+                    System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                        MessageBox mb = new MessageBox();
+                        mb.text.Text = "Done with file " + file.Name;
+                        mb.Show();
+                    });
+
+                    
+                }
+
+            }
+
+            System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                MessageBox mb = new MessageBox();
+                mb.text.Text = "Writing results files now";
+                mb.Show();
+            });
+
+            List<StringBuilder> sameResultsList = new List<StringBuilder>();
+
+            var orgFiles = new DirectoryInfo(_directory).EnumerateFiles().Where(f => !f.Extension.Equals(".ttpack") && Path.GetFileNameWithoutExtension(f.Name).Length > 8);
+            var decodedFiles = new DirectoryInfo(_directory).EnumerateFiles().Where(f => Path.GetFileNameWithoutExtension(f.Name).Length == 8);
+
+            //var orgFiles = new DirectoryInfo(_directory).GetFiles("????????*.*")/*.Where(file => !file.Name.EndsWith(".ttpack"))*/;
+            //var decodedFiles = new DirectoryInfo(_directory).GetFiles("????????.*")/*.Where(file => !file.Name.EndsWith(".ttpack"))*/;
+
+            if (orgFiles.Count() == decodedFiles.Count())
+
+                for (int i = 0; i < orgFiles.Count(); i++)
+                {
+                    StringBuilder isSameResult = new StringBuilder();
+                    isSameResult.Append(CompareFiles(orgFiles.ElementAt(i), decodedFiles.ElementAt(i))).Append(_colon)
+                        .Append(orgFiles.ElementAt(i).Length).Append(_colon)
+                        .Append(decodedFiles.ElementAt(i).Length);
+                    sameResultsList.Add(isSameResult);
                 }
 
 
-            }
+            Directory.CreateDirectory(Path.Combine(_directory, "results"));
 
-            stopwatch.Stop();
+            StringBuilder[] testResults = results.ToArray();
 
-            string results = "Time needed for complete Test of " + areSame.Count + " Files: " + stopwatch.Elapsed + "\r\n";
+            StreamWriter sw = new StreamWriter(Path.Combine(_directory, "results", "testResults.txt"));
 
-            for (int i = 0; i < areSame.Count; i++)
+            foreach (StringBuilder line in testResults)
             {
-                // Writes results from Dictionarys to string, so that it can be saved
-                results += "\r\nOriginal File Name & Size: \r\n";
-                results += orgFileInfo.ElementAt(i).Key.ToString() + " " + orgFileInfo.ElementAt(i).Value.ToString();
-                results += "\r\nZipped File Name & Size: \r\n";
-                results += verFileInfo.ElementAt(i).Key.ToString() + " " + verFileInfo.ElementAt(i).Value.ToString();
-                results += "\r\nUnzipped File Name & Size: \r\n";
-                results += entFileInfo.ElementAt(i).Key.ToString() + " " + entFileInfo.ElementAt(i).Value.ToString();
-                results += "\r\nIs Original File same as Reference file: \r\n";
-                results += areSame.ElementAt(i).Key.ToString() + " " + areSame.ElementAt(i).Value.ToString();
-                results += "\r\n\r\n";
+                sw.WriteLine(line.ToString());
+            }
+            
 
+            sw.Flush();
+            sw.Close();
+            
+
+            StringBuilder[] sameResultsTest = sameResultsList.ToArray();
+
+            StreamWriter sw1 = new StreamWriter(Path.Combine(_directory, "results", "testResultsAreSame.txt"));
+
+            foreach (StringBuilder line in sameResultsTest)
+            {
+                sw1.WriteLine(line.ToString());
             }
 
-            // Saves string to text file
-            StreamWriter sw = new StreamWriter(
-                    exsDir + "\\results\\test_result__" +
-                    System.DateTime.Now.ToString(new System.Globalization.CultureInfo("de-DE"))
-                        .Replace(':', '-')
-                        .Replace('.', '-')
-                        .Replace(' ', '_') +
-                    ".txt");
-            sw.Write(results);
-            sw.Close();
+            sw1.Flush();
+            sw1.Close();
 
-            // Shows results in a Message Box
-            System.Windows.MessageBox.Show(
-               results,
-               "Test Results: ",
-               System.Windows.MessageBoxButton.OK,
-               System.Windows.MessageBoxImage.Information,
-               System.Windows.MessageBoxResult.OK,
-               System.Windows.MessageBoxOptions.ServiceNotification);
+            System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                MessageBox mb = new MessageBox();
+                mb.text.Text = "Done with file results files";
+                mb.Show();
+            });
 
         }
 
-        /// <summary>
-        /// Delets old filed
-        /// </summary>
-        private static void DelFiles()
+        private static bool CompareFiles(FileInfo file1, FileInfo file2)
         {
-            for (int i = 1; i <= 2; i++)
-                foreach (FileInfo file in new DirectoryInfo(dirs[i]).GetFiles())
-                    file.Delete();
-        }
+            FileStream fs1 = new FileStream(file1.FullName, FileMode.Open, FileAccess.Read);
+            BinaryReader br1 = new BinaryReader(fs1);
 
-        /// <summary>
-        /// Checks if decoded files and original files are the same
-        /// </summary>
-        /// <param name="checkFile"></param>
-        /// <returns></returns>
-        private static bool IsSameAs(FileInfo checkFile)
-        {
-            FileStream fsReadCheck = new FileStream(checkFile.FullName, FileMode.Open, FileAccess.Read);
-            BinaryReader brCheck = new BinaryReader(fsReadCheck);
+            FileStream fs2 = new FileStream(file2.FullName, FileMode.Open, FileAccess.Read);
+            BinaryReader br2 = new BinaryReader(fs2);
 
-            UpdateValues(checkFile, 2);
+            byte[] fileOne = br1.ReadBytes((int)fs1.Length);
+            byte[] fileTwo = br2.ReadBytes((int)fs2.Length);
 
-            FileStream fsReadRef = new FileStream(Values.destinationPath, FileMode.Open, FileAccess.Read);
-            BinaryReader brRef = new BinaryReader(fsReadRef);
+            fs1.Close();
+            br1.Close();
 
-            while (fsReadCheck.Position < fsReadCheck.Length && fsReadRef.Position < fsReadRef.Length)
-                if (brCheck.ReadByte() != brRef.ReadByte())
+            fs2.Close();
+            br2.Close();
+
+            for (int i = 0; i < fileOne.Length && i < fileTwo.Length; i++)
+                if (fileOne[i] != fileTwo[i])
                     return false;
+
             return true;
-        }
-
-
-        /// <summary>
-        /// Updates Values
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="directory"></param>
-        private static void UpdateValues(FileInfo info, int directory)
-        {
-            Values.source = info;
-            Values.destinationFileName = info.Name;
-            Values.destinationDirectory = dirs[++directory] + "\\";
-            Values.destinationPath = Values.destinationDirectory + Values.destinationFileName;
         }
     }
 }
