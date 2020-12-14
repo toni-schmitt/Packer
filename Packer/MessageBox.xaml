@@ -33,7 +33,7 @@
 
 
         <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1">
-            <TextBlock 
+            <TextBlock x:FieldModifier="public" x:Name="text"
                 Text="{DynamicResource done}"
                 Style="{StaticResource MaterialDesignHeadline1TextBlock}">
             </TextBlock>

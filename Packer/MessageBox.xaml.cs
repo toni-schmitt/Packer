@@ -32,6 +32,14 @@ namespace Packer
             this.Resources.MergedDictionaries.Add(currentResourceDictionary);
         }
 
+        public MessageBox()
+        {
+            InitializeComponent();
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            text.Text = "done";
+            close.Content = "close";
+        }
+
         private void Close_Click(object sender, RoutedEventArgs e)
         {
             // Cloeses this Window
