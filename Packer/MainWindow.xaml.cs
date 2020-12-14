@@ -203,9 +203,12 @@ namespace Packer
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void StartUnitTest_Click(object sender, RoutedEventArgs e)
+        private void StartUnitTest_Click(object sender, RoutedEventArgs e)
         {
-            await Task.Run(() => UnitTest.StartTest());
+            Window.Visibility = Visibility.Hidden;
+            UnitTestWindow ut = new UnitTestWindow();
+            while ((bool)ut.ShowDialog());
+            Window.Visibility = Visibility.Visible;
         }
 
 

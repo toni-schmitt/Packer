@@ -66,6 +66,7 @@ namespace Packer
             return System.Windows.Application.Current.Windows.OfType<MainWindow>().First().destinationName.Text;
         }
 
+
         /// <summary>
         /// Removes extension from a string
         /// </summary>

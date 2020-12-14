@@ -153,5 +153,18 @@
                     Visibility="Hidden"/>
         </Viewbox>
 
+        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0">
+            <Button x:Name="unittest" 
+                    Content="" 
+                    MinWidth="100" 
+                    Click="StartUnitTest_Click"
+                    Visibility="Visible" 
+                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                    materialDesign:ButtonProgressAssist.Value="-1"
+                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="False"
+                    materialDesign:ButtonProgressAssist.IsIndeterminate="False" 
+                    IsEnabled="True"/>
+        </Viewbox>
+
     </Grid>
 </Window>
