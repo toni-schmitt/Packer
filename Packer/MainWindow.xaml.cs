@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Microsoft.WindowsAPICodePack;
 
 // Dont use these Using directives or elese some Options like Cursor are not going to work
 // Some Classes are in both directives
