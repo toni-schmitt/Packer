@@ -20,5 +20,6 @@
         public static char endOfHeader = '\0';              // End of header
 
         public static char dot = '.';
+        public static char tilde = '~';
     }
 }

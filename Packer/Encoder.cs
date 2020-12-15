@@ -131,10 +131,10 @@ namespace Packer
             // Ensures length of name is exactly 8
             if (sourceNameSub.Length < Values.maxNameLength) // If sourceName without extension is lower then 8
                 // Replace empty chars with '-'
-                sourceNameSub.Append('-', (Values.maxNameLength - sourceNameSub.Length));
+                sourceNameSub.Append(Values.tilde, (Values.maxNameLength - sourceNameSub.Length));
             else
                 // Remove everything from 8
-                sourceNameSub.Remove(Values.maxNameLength, (sourceNameSub.Length - Values.maxNameLength));
+                sourceNameSub.Remove(Values.maxNameLength, (sourceNameSub.Length - Values.maxNameLength)).Append(Values.tilde);
 
             return sourceNameSub.ToString();
         }
