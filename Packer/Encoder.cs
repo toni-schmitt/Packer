@@ -57,7 +57,8 @@ namespace Packer
                         sameCount++;
 
                     // Decreases Position by 1
-                    fsRead.Position--;
+                    if (fsRead.Position != fsReadLength)
+                        fsRead.Position--;
                 }
 
 
