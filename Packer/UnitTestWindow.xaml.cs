@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Packer
 {
@@ -22,11 +13,19 @@ namespace Packer
         public UnitTestWindow()
         {
             InitializeComponent();
+            // Center Window
             windowUnitTest.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
 
+
+        /// <summary>
+        /// Sets the destination directory where the files of the Unit Test are
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ClickDestDir(object sender, MouseButtonEventArgs e)
         {
+            // Initializes an CommonOpenFileDialog for choosing a folder
             Microsoft.WindowsAPICodePack.Dialogs.CommonOpenFileDialog openFileDialog = new Microsoft.WindowsAPICodePack.Dialogs.CommonOpenFileDialog
             {
                 IsFolderPicker = true,
@@ -41,14 +40,22 @@ namespace Packer
             }
         }
 
+        /// <summary>
+        /// Starts UnitTest
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void ClickStartTest(object sender, RoutedEventArgs e)
         {
+            // Disables buttons so that user knows Unit Test is in progress
             destinationDirectory.IsEnabled = false;
             startTest.IsEnabled = false;
             analyze.IsEnabled = false;
 
+            // Starts Unit Test as background Thread
             await Task.Run(() => UnitTest.StartTest());
 
+            // Enables buttons so that user knows UnitTest is done
             destinationDirectory.IsEnabled = true;
             startTest.IsEnabled = true;
             analyze.IsEnabled = true;
