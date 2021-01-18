@@ -1,8 +1,8 @@
 # Packer
-##Short description
+## Short description
 A simple program to decrease the size of files
 
-##Short instruction for usage
+## Short instruction for usage
 
 After opening the program you are promted to choose a file.
 After choosing a file you can put in a Directory and Name for the destination file.
@@ -13,7 +13,7 @@ Optional: The langauge can be switched from German to English
 The program should be useable without installation. If the programm does not start, pls use the Installer.
 
 
-##Technical Documentation
+## Technical Documentation
 
 To decrease file size the program uses the run-length encoding.
 Before you start cloning the project, pls install following dependencies.
